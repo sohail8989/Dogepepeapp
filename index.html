@@ -271,6 +271,43 @@
     }
 
     updateUI();
+// Tasks System Logic
+let completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || {};
+
+function completeTask(taskId, url, reward) {
+    if (completedTasks[taskId]) {
+        alert("Aap yeh task pehle hi poora kar chuke hain!");
+        return;
+    }
+
+    // Link Open Karein
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openLink(url);
+    } else {
+        window.open(url, '_blank');
+    }
+
+    // Reward add karein aur save karein
+    setTimeout(() => {
+        if (typeof balance !== 'undefined') {
+            balance += reward;
+            localStorage.setItem('balance', balance);
+            if (typeof updateUI === 'function') updateUI();
+        }
+
+        completedTasks[taskId] = true;
+        localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+
+        const btn = document.getElementById(`${taskId}-task-btn`);
+        if (btn) {
+            btn.innerText = 'Completed ✓';
+            btn.style.backgroundColor = '#4CAF50';
+            btn.disabled = true;
+        }
+
+        alert(`Mubarak ho! Aapko +${reward.toLocaleString()} coins mil gaye hain! 🎉`);
+    }, 1000);
+}
 
 
   </script>
