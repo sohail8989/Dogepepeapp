@@ -172,3 +172,19 @@ function connectWallet() {
     alert("Wallet is already connected.");
   }
 }
+// Updated Share Link Function
+function shareInviteLink() {
+  // Yahan exact username set kar diya hy
+  const botUsername = "DogepepeBot"; 
+  
+  const userId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "7824642832";
+  
+  const shareText = encodeURIComponent("🐸 Join Dogepepe Tap App and get 1,000,000 Coins ($233 USD) free!");
+  const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=${shareText}`;
+  
+  if (tg) {
+    tg.openTelegramLink(inviteUrl);
+  } else {
+    window.open(inviteUrl, '_blank');
+  }
+}
