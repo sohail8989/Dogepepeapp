@@ -75,6 +75,31 @@
     .nav-bar { width: 100%; display: flex; justify-content: space-around; background: #151d2a; padding: 12px 0; border-top: 1px solid #233146; }
     .nav-item { color: #8a9ba8; text-decoration: none; font-size: 11px; flex: 1; text-align: center; cursor: pointer; }
     .nav-item.active { color: #3498db; }
+    /* Floating +10 Animation */
+.tap-animation {
+  position: absolute;
+  color: #28a745;
+  font-weight: bold;
+  font-size: 26px;
+  pointer-events: none;
+  animation: floatUp 0.8s ease-out forwards;
+  z-index: 999;
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
+/* Energy Meter */
+.energy-container {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #f1c40f;
+  text-align: center;
+}
+
   </style>
 </head>
 <body>
@@ -96,7 +121,11 @@
     <!-- TAB 1: Exchange / Tap Screen -->
     <div id="exchange-tab" class="tab-content active">
       <h1 id="balance" style="font-size: 40px; font-weight: bold;">0</h1>
-      <div class="coin-btn" id="tap-btn">🐸 TAP!</div>
+      <div class="coin-btn" id="tap-btn">🐸 TAP!</div
+<div class="energy-container">
+  ⚡ <span id="energy">1000</span> / 1000
+</div>
+
     </div>
 
     <!-- TAB 2: Friends Section -->
@@ -122,40 +151,75 @@
   </div>
 
   <script>
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) tg.expand();
 
     // 1. Data Load System
     let balance = parseFloat(localStorage.getItem('doge_balance')) || 0;
     let earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
     let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 1000000;
+    let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
+    let maxEnergy = 1000;
 
     const balanceEl = document.getElementById('balance');
     const tapBtn = document.getElementById('tap-btn');
+    const energyEl = document.getElementById('energy');
 
-    // UI Update and Save Function
+    // UI Update Function
     function updateUI() {
       if (balanceEl) balanceEl.innerText = Math.floor(balance).toLocaleString();
+      if (energyEl) energyEl.innerText = energy;
+
       localStorage.setItem('doge_balance', balance);
       localStorage.setItem('doge_tap', earnPerTap);
       localStorage.setItem('doge_profit', profitPerHour);
+      localStorage.setItem('doge_energy', energy);
     }
 
-    // 2. Tap Listener
+    // 2. Tap Listener with Energy & Floating +10 Animation
     if (tapBtn) {
-      tapBtn.addEventListener('click', () => {
-        balance += earnPerTap;
-        updateUI();
+      tapBtn.addEventListener('click', (e) => {
+        if (energy >= earnPerTap) {
+          balance += earnPerTap;
+          energy -= earnPerTap;
+          createTapEffect(e);
+          updateUI();
+        }
       });
     }
 
-    // 3. Profit Per Hour (Har 1 sec mein add hoga)
+    // Floating +10 Effect
+    function createTapEffect(e) {
+      const text = document.createElement('div');
+      text.className = 'tap-animation';
+      text.innerText = '+' + earnPerTap;
+      
+      const rect = tapBtn.getBoundingClientRect();
+      const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
+      const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
+      
+      text.style.left = `${rect.left + x - 10}px`;
+      text.style.top = `${rect.top + y - 20}px`;
+      
+      document.body.appendChild(text);
+      setTimeout(() => text.remove(), 800);
+    }
+
+    // Auto Energy Recharge (Har 1 sec me +3 energy)
+    setInterval(() => {
+      if (energy < maxEnergy) {
+        energy = Math.min(maxEnergy, energy + 3);
+        updateUI();
+      }
+    }, 1000);
+
+    // Profit Per Hour (Har 1 sec me passive earnings)
     setInterval(() => {
       balance += (profitPerHour / 3600);
       updateUI();
     }, 1000);
 
-    // 4. Tab Navigation
+    // Tab Switcher Navigation
     function switchTab(tabId, el) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -164,7 +228,7 @@
       el.classList.add('active');
     }
 
-    // 5. Direct Fixed Share Link
+    // Telegram Referral Share Link
     function shareInviteLink() {
       const botUsername = "Dogepepeofficialcoinbot"; 
       const userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "7824642832";
@@ -178,7 +242,6 @@
       }
     }
 
-    // Initial Load
     updateUI();
 
 
