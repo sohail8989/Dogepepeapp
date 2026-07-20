@@ -1,0 +1,56 @@
+let score = 0;
+let pph = 0; // Profit Per Hour
+let energy = 1000;
+let maxEnergy = 1000;
+let upgradeCost = 50;
+
+const scoreEl = document.getElementById('score');
+const pphEl = document.getElementById('pph');
+const energyEl = document.getElementById('energy');
+const upgradeCostEl = document.getElementById('upgrade-cost');
+const tapBtn = document.getElementById('tap-btn');
+const upgradeBtn = document.getElementById('upgrade-btn');
+
+// Tap Logic
+tapBtn.addEventListener('click', () => {
+  if (energy > 0) {
+    score += 1;
+    energy -= 1;
+    updateUI();
+  }
+});
+
+// Upgrade Profit Per Hour Logic
+upgradeBtn.addEventListener('click', () => {
+  if (score >= upgradeCost) {
+    score -= upgradeCost;
+    pph += 100; // Har upgrade par 100 PPH barhega
+    upgradeCost = Math.floor(upgradeCost * 1.5); // Next upgrade ki keemat barh jaye gi
+    updateUI();
+  } else {
+    alert("Coins kam hain!");
+  }
+});
+
+// Passive Income (Profit Per Hour Auto Generation)
+setInterval(() => {
+  if (pph > 0) {
+    score += Math.floor(pph / 3600); // Har second me PPH ka hissa add hoga
+    updateUI();
+  }
+}, 1000);
+
+// Energy Auto-Recovery
+setInterval(() => {
+  if (energy < maxEnergy) {
+    energy += 1;
+    updateUI();
+  }
+}, 1000);
+
+function updateUI() {
+  scoreEl.innerText = score.toLocaleString();
+  pphEl.innerText = "+" + pph.toLocaleString();
+  energyEl.innerText = energy;
+  upgradeCostEl.innerText = upgradeCost.toLocaleString();
+}
