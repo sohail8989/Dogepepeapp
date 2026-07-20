@@ -23,7 +23,7 @@
     }
 
     body {
-      background-color: #0b101b;
+      background-color: #0d131d;
       color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -31,64 +31,80 @@
       overflow: hidden;
     }
 
-    /* Top Stats */
+    /* Top Stats Header */
     .top-stats {
       display: flex;
       justify-content: space-between;
-      padding: 12px;
-      gap: 10px;
+      padding: 10px;
+      gap: 6px;
     }
 
     .stat-card {
-      background: #141c2b;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 10px 8px;
+      background: #18222d;
+      border: 1px solid #233140;
+      border-radius: 10px;
+      padding: 6px;
       text-align: center;
       flex: 1;
     }
 
     .stat-label {
       font-size: 10px;
-      color: #64748b;
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+      color: #8b9eb0;
+      margin-bottom: 2px;
     }
 
     .stat-val {
-      font-size: 14px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #4cd964;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .supply-banner {
+      background: rgba(24, 34, 45, 0.8);
+      border: 1px dashed #233140;
+      border-radius: 8px;
+      margin: 0 10px 4px;
+      padding: 5px;
+      text-align: center;
+      font-size: 11px;
+      color: #8b9eb0;
+    }
+
+    .supply-banner span { color: #4cd964; font-weight: bold; }
+
+    /* Attraction Price Banner */
+    .price-banner {
+      background: linear-gradient(90deg, #d97706, #b45309);
+      border-radius: 20px;
+      margin: 2px 10px 8px;
+      padding: 4px;
+      text-align: center;
+      font-size: 11px;
       font-weight: bold;
       color: #ffffff;
+      box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
     }
 
-    .val-green { color: #10b981; }
-
-    /* Est Value Banner */
-    .est-banner {
-      background: linear-gradient(90deg, #3b2a08, #2a1f05);
-      border: 1px solid #f59e0b;
-      border-radius: 20px;
-      margin: 0 12px 10px;
-      padding: 6px 12px;
-      text-align: center;
-      font-size: 11px;
-      color: #fbbf24;
-      font-weight: bold;
+    /* Tab Content Wrappers */
+    .tab-content {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 20px 15px;
+      overflow-y: auto;
     }
 
-    /* Main Balance Display */
-    .balance-container {
-      text-align: center;
-      margin-top: 5px;
-    }
+    .tab-content.active { display: flex; }
 
-    .balance-label {
-      font-size: 11px;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    /* Main Balance */
+    .balance-container { text-align: center; }
 
     .balance-val {
       font-size: 38px;
@@ -96,222 +112,333 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
+    }
+
+    .level-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 11px;
+      color: #8b9eb0;
+      margin-top: 4px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #18222d;
+      border-radius: 10px;
+      overflow: hidden;
       margin-top: 2px;
     }
 
-    /* Tap Target Area */
-    .tap-area-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex: 1;
+    .progress-fill {
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, #3290ec, #4cd964);
     }
 
+    /* Tap Target Area & Embedded Image Fix */
     .tap-area {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 230px;
+      height: 230px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(0,0,0,0) 70%);
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+      background: radial-gradient(circle, rgba(76,217,100,0.25) 0%, rgba(0,0,0,0) 70%);
+      box-shadow: 0 0 25px rgba(76, 217, 100, 0.4);
       cursor: pointer;
     }
 
     .tap-coin-img {
-      width: 220px;
-      height: 220px;
+      width: 210px;
+      height: 210px;
       border-radius: 50%;
-      object-fit: cover;
       transition: transform 0.05s ease;
     }
 
-    .tap-coin-img:active {
-      transform: scale(0.95);
-    }
+    .tap-coin-img:active { transform: scale(0.95); }
 
-    /* Floating Tap Animation */
+    /* Tap Floating Number Effect */
     .floating-num {
       position: absolute;
       font-size: 26px;
-      font-weight: 800;
+      font-weight: bold;
       color: #ffffff;
       pointer-events: none;
       animation: floatUp 0.8s ease-out forwards;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
     @keyframes floatUp {
       0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-70px); }
+      100% { opacity: 0; transform: translateY(-80px); }
     }
 
-    /* Bottom Info Card Area */
-    .bottom-section {
-      padding: 0 12px 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .energy-bar-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .invite-card {
-      background: #141c2b;
-      border: 1px dashed #223046;
-      border-radius: 12px;
-      padding: 10px 14px;
+    /* Energy Bar */
+    .energy-container {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .invite-title {
+    .energy-text {
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .boost-btn {
+      background: #18222d;
+      border: 1px solid #233140;
+      color: #ff9500;
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 13px;
       font-weight: bold;
-    }
-
-    .invite-sub {
-      font-size: 10px;
-      color: #10b981;
-      margin-top: 2px;
-    }
-
-    .btn-invite {
-      background: #f59e0b;
-      color: #000000;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
       cursor: pointer;
     }
 
-    .btn-upgrade {
-      background: #f59e0b;
-      color: #000000;
+    /* Cards */
+    .page-card {
+      background: #18222d;
+      border: 1px solid #233140;
+      border-radius: 12px;
+      padding: 16px;
+      width: 100%;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .action-btn {
+      background: #2aabee;
+      color: #ffffff;
       border: none;
       width: 100%;
       padding: 12px;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: bold;
+      margin-top: 12px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
+
+    #ton-connect-btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      background: #141c24;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 12px;
+      border-top: 1px solid #1e2a38;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #6c7e8e;
+      font-size: 11px;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-item i { font-size: 18px; }
+    .nav-item.active { color: #2aabee; }
   </style>
 </head>
 <body>
 
-  <!-- Top Stats -->
+  <!-- Top Info Header -->
   <div class="top-stats">
     <div class="stat-card">
-      <div class="stat-label">Total Supply</div>
-      <div class="stat-val">420M</div>
+      <div class="stat-label">Earn per tap</div>
+      <div class="stat-val"><i class="fa-solid fa-coins" style="color:#ffcc00"></i> +10</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Profit / Hour</div>
-      <div class="stat-val val-green">+<span id="pph-val">0</span></div>
+      <div class="stat-label">Coins to level up</div>
+      <div class="stat-val" style="color:#3290ec">10M</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Profit per hour</div>
+      <div class="stat-val"><i class="fa-solid fa-coins" style="color:#ffcc00"></i> +1.00M</div>
     </div>
   </div>
 
-  <!-- Value Banner -->
-  <div class="est-banner">
-    🔥 Est. Value: 1,000,000 Coins ≈ $200 USD
-  </div>
+  <div class="supply-banner">Total Supply: <span>420M</span></div>
+  <div class="price-banner">🔥 Est. Value: 1,000,000 Coins ≈ $233 USD</div>
 
-  <!-- Total Balance -->
-  <div class="balance-container">
-    <div class="balance-label">Total Balance</div>
-    <div class="balance-val">
-      <span>🐸</span>
-      <span id="coin-count">0</span>
-    </div>
-  </div>
-
-  <!-- Tap Main Coin Area -->
-  <div class="tap-area-wrapper">
-    <div class="tap-area" id="tap-target">
-      <img src="dogepepe.png" alt="Dogepepe Coin" class="tap-coin-img">
-    </div>
-  </div>
-
-  <!-- Bottom Section -->
-  <div class="bottom-section">
-    <div class="energy-bar-info">
-      <span style="color:#f59e0b;"><i class="fa-solid fa-bolt"></i> Energy</span>
-      <span><span id="energy-count">1000</span> / 1000</span>
-    </div>
-
-    <!-- Hamster Style Invite Box -->
-    <div class="invite-card">
-      <div>
-        <div class="invite-title">👥 Invite 1 Friend</div>
-        <div class="invite-sub">Get +1,000,000 Coins ($200)</div>
+  <!-- TAB 1: Exchange / Tap Screen -->
+  <div id="tab-exchange" class="tab-content active">
+    <div class="balance-container">
+      <div class="balance-val">
+        <i class="fa-solid fa-coins" style="color:#ffcc00"></i>
+        <span id="coin-count">0</span>
       </div>
-      <button class="btn-invite" onclick="shareReferralLink()">Invite</button>
+      <div style="width: 260px; margin: 0 auto;">
+        <div class="level-info">
+          <span>Epic &gt;</span>
+          <span>Level <strong>6/10</strong></span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
     </div>
 
-    <button class="btn-upgrade" onclick="upgradePPH()">
-      🚀 Upgrade PPH (Cost: 50)
-    </button>
+    <!-- Tap Target Center Area with Guaranteed Vector Image -->
+    <div class="tap-area" id="tap-target">
+      <svg class="tap-coin-img" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="95" fill="#eab308" stroke="#fef08a" stroke-width="6"/>
+        <circle cx="100" cy="100" r="82" fill="#ca8a04"/>
+        <circle cx="100" cy="100" r="72" fill="#15803d"/>
+        <!-- Pepe Frog Face -->
+        <ellipse cx="75" cy="70" rx="18" ry="14" fill="#86efac"/>
+        <ellipse cx="125" cy="70" rx="18" ry="14" fill="#86efac"/>
+        <circle cx="75" cy="70" r="6" fill="#000"/>
+        <circle cx="125" cy="70" r="6" fill="#000"/>
+        <path d="M 60 120 Q 100 150 140 120" stroke="#dc2626" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <text x="100" y="175" font-family="Arial" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">DOGEPEPE</text>
+      </svg>
+    </div>
+
+    <!-- Energy Section -->
+    <div class="energy-container">
+      <div class="energy-text">
+        <i class="fa-solid fa-bolt" style="color:#ffcc00"></i>
+        <span id="energy-count">1000</span> / 1000
+      </div>
+      <div class="boost-btn">
+        <i class="fa-solid fa-rocket"></i> Boost
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Mine Screen -->
+  <div id="tab-mine" class="tab-content">
+    <h2 style="margin-top: 20px;">Mining Dashboard</h2>
+    <div class="page-card">
+      <p>Passive Earning Rate: <strong>1,000,000 Coins / Hour</strong></p>
+    </div>
+  </div>
+
+  <!-- TAB 3: Friends -->
+  <div id="tab-friends" class="tab-content">
+    <h2 style="margin-top: 10px;">Invite Friends</h2>
+    <div class="page-card">
+      <i class="fa-solid fa-users" style="font-size: 40px; color: #2aabee; margin-bottom: 10px;"></i>
+      <h3>Invite friends and get bonuses!</h3>
+      <p style="font-size: 13px; color: #8b9eb0; margin-top: 5px;">+1,000,000 Dogepepe ($233) for each friend!</p>
+      
+      <button class="action-btn" onclick="inviteFriend()">
+        <i class="fa-solid fa-user-plus"></i> Invite a Friend
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 4: Earn Screen -->
+  <div id="tab-earn" class="tab-content">
+    <h2 style="margin-top: 20px;">Earn Tasks</h2>
+    <div class="page-card">
+      <p>Complete daily tasks to earn extra rewards.</p>
+    </div>
+  </div>
+
+  <!-- TAB 5: Airdrop -->
+  <div id="tab-airdrop" class="tab-content">
+    <h2 style="margin-top: 10px;">Airdrop Tasks</h2>
+    <div class="page-card">
+      <i class="fa-solid fa-wallet" style="font-size: 36px; color: #4cd964; margin-bottom: 8px;"></i>
+      <h3>Connect TON Wallet</h3>
+      <div id="ton-connect-btn"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Tabs -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('tab-exchange', this)">
+      <i class="fa-solid fa-fire"></i>
+      <span>Exchange</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-mine', this)">
+      <i class="fa-solid fa-pickaxe"></i>
+      <span>Mine</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-friends', this)">
+      <i class="fa-solid fa-user-group"></i>
+      <span>Friends</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-earn', this)">
+      <i class="fa-solid fa-sack-dollar"></i>
+      <span>Earn</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-airdrop', this)">
+      <i class="fa-solid fa-coins"></i>
+      <span>Airdrop</span>
+    </div>
   </div>
 
   <script>
-    // 1. Telegram Mini-App Setup
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    // Telegram User Info Fix for Link Generation
-    const userTelegramId = tg?.initDataUnsafe?.user?.id || "user" + Math.floor(Math.random() * 10000);
-    const BOT_USERNAME = "DogepepeBot"; // Yahan apne Telegram Bot ka username write karein
+    const BOT_USERNAME = "DogepepeBot"; 
+    const PPH_RATE = 1000000; // 1M Coins per Hour
 
-    // 2. Persistent LocalStorage Data Handler
-    let coins = parseInt(localStorage.getItem('dogepepe_coins')) || 0;
-    let energy = parseInt(localStorage.getItem('dogepepe_energy')) || 1000;
-    let pph = parseInt(localStorage.getItem('dogepepe_pph')) || 0;
+    // Double Storage System (Persistent Data)
+    let coins = parseInt(localStorage.getItem('dp_coins')) || 0;
+    let energy = parseInt(localStorage.getItem('dp_energy')) || 1000;
+    let lastTime = parseInt(localStorage.getItem('dp_last_time')) || Date.now();
+
+    // Calculate Offline Profit Per Hour
+    const now = Date.now();
+    const hoursPassed = (now - lastTime) / (1000 * 60 * 60);
+    if (hoursPassed > 0) {
+      const offlineCoins = Math.floor(hoursPassed * PPH_RATE);
+      if (offlineCoins > 0) {
+        coins += offlineCoins;
+      }
+    }
+    localStorage.setItem('dp_last_time', now);
 
     const coinsEl = document.getElementById('coin-count');
     const energyEl = document.getElementById('energy-count');
-    const pphEl = document.getElementById('pph-val');
     const tapTarget = document.getElementById('tap-target');
 
-    // Display loaded values
     coinsEl.innerText = coins.toLocaleString();
     energyEl.innerText = energy;
-    pphEl.innerText = pph.toLocaleString();
 
-    // Function to save state permanently
-    function saveData() {
-      localStorage.setItem('dogepepe_coins', coins);
-      localStorage.setItem('dogepepe_energy', energy);
-      localStorage.setItem('dogepepe_pph', pph);
+    function saveState() {
+      localStorage.setItem('dp_coins', coins);
+      localStorage.setItem('dp_energy', energy);
+      localStorage.setItem('dp_last_time', Date.now());
     }
 
-    // 3. Tap Mechanics
+    // Tap Function
     tapTarget.addEventListener('click', (e) => {
       if (energy >= 10) {
         coins += 10;
         energy -= 10;
-        
         coinsEl.innerText = coins.toLocaleString();
         energyEl.innerText = energy;
-        saveData();
+        saveState();
 
-        // Plus 10 Floating Animation
+        // Tap Animation
         const floatingNum = document.createElement('div');
         floatingNum.className = 'floating-num';
         floatingNum.innerText = '+10';
@@ -328,42 +455,42 @@
       }
     });
 
-    // 4. Energy Regeneration Over Time
+    // Auto Energy Restore
     setInterval(() => {
       if (energy < 1000) {
-        energy = Math.min(1000, energy + 2);
+        energy = Math.min(1000, energy + 3);
         energyEl.innerText = energy;
-        saveData();
+        saveState();
       }
     }, 1000);
 
-    // 5. Hamster Style Referral Link Share Function
-    function shareReferralLink() {
-      const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${userTelegramId}`;
-      const shareText = `🐸 Play Dogepepe with me and get 1,000,000 free coins!\n🎁 Join here:`;
+    // Tab Switcher
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // Hamster Invite Link Fix
+    function inviteFriend() {
+      const userId = tg?.initDataUnsafe?.user?.id || 'ref';
+      const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${userId}`;
+      const shareText = "🐸 Join Dogepepe Tap App and get 1,000,000 Coins ($233 USD) free!";
+      const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`;
       
-      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`;
-
       if (tg && tg.openTelegramLink) {
-        tg.openTelegramLink(shareUrl);
+        tg.openTelegramLink(fullUrl);
       } else {
-        window.open(shareUrl, '_blank');
+        window.open(fullUrl, '_blank');
       }
     }
 
-    // Upgrade PPH Test Feature
-    function upgradePPH() {
-      if (coins >= 50) {
-        coins -= 50;
-        pph += 100;
-        coinsEl.innerText = coins.toLocaleString();
-        pphEl.innerText = pph.toLocaleString();
-        saveData();
-      } else {
-        alert("Not enough coins!");
-      }
-    }
+    // TON Connect
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test-manifest.json',
+        buttonRootId: 'ton-connect-btn'
+    });
   </script>
 </body>
 </html>
-
