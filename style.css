@@ -77,17 +77,18 @@ body {
 
 /* Tab Views Management */
 .tab-view {
-  display: none;
+  display: none !important;
   flex: 1;
   flex-direction: column;
   align-items: center;
   padding-top: 15px;
   overflow-y: auto;
   padding-bottom: 70px;
+  width: 100%;
 }
 
-.tab-view.active {
-  display: flex;
+.tab-view.active-view {
+  display: flex !important;
 }
 
 .view-title {
@@ -99,6 +100,7 @@ body {
   font-size: 12px;
   color: #8192a4;
   margin-bottom: 12px;
+  text-align: center;
 }
 
 /* Score Section */
@@ -144,8 +146,8 @@ body {
 /* Pepe Tap Button */
 .coin-container {
   margin: auto 0;
-  width: 210px;
-  height: 210px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   background: radial-gradient(circle, #2a3d31 0%, #0d1e15 100%);
   display: flex;
@@ -153,7 +155,7 @@ body {
   align-items: center;
   box-shadow: 0 0 30px rgba(43, 180, 115, 0.3);
   cursor: pointer;
-  transition: transform 0.05s ease;
+  touch-action: manipulation;
 }
 
 .coin-container:active {
@@ -161,8 +163,8 @@ body {
 }
 
 .coin-inner {
-  width: 180px;
-  height: 180px;
+  width: 170px;
+  height: 170px;
   border-radius: 50%;
   background: #e5b024;
   border: 8px solid #fbd24e;
@@ -172,8 +174,8 @@ body {
 }
 
 .pepe-face {
-  width: 140px;
-  height: 140px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   background: #1e9d4a;
   display: flex;
@@ -190,8 +192,8 @@ body {
 }
 
 .eyes span {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   background: #fff;
   border-radius: 50%;
   display: flex;
@@ -208,21 +210,21 @@ body {
 }
 
 .smile {
-  width: 65px;
-  height: 20px;
+  width: 60px;
+  height: 18px;
   border-bottom: 4px solid #e72128;
   border-radius: 0 0 20px 20px;
 }
 
 .coin-label {
   position: absolute;
-  bottom: 14px;
-  font-size: 12px;
+  bottom: 12px;
+  font-size: 11px;
   font-weight: 900;
   color: #fff;
 }
 
-/* Footer Energy & Boost */
+/* Energy Container */
 .energy-container {
   width: 100%;
   display: flex;
@@ -246,7 +248,7 @@ body {
   cursor: pointer;
 }
 
-/* Cards & Lists */
+/* Cards List */
 .mine-grid, .task-list {
   width: 100%;
 }
@@ -272,9 +274,7 @@ body {
 .card-info h3 { font-size: 14px; }
 .card-info p { font-size: 12px; color: #2bb473; margin-top: 2px; }
 
-.gift-icon, .airdrop-icon {
-  font-size: 40px;
-}
+.gift-icon, .airdrop-icon { font-size: 40px; }
 
 .action-btn {
   background: #3390ec;
@@ -296,7 +296,7 @@ body {
 
 /* Bottom Navigation Bar */
 .bottom-nav {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -306,11 +306,13 @@ body {
   justify-content: space-around;
   align-items: center;
   border-top: 1px solid #242f3d;
-  z-index: 100;
+  z-index: 9999;
+  max-width: 440px;
+  margin: 0 auto;
 }
 
 .nav-item {
-  background: none;
+  background: transparent;
   border: none;
   color: #8192a4;
   display: flex;
@@ -319,9 +321,10 @@ body {
   font-size: 10px;
   cursor: pointer;
   flex: 1;
+  outline: none;
 }
 
-.nav-item.active {
+.nav-item.active-nav {
   color: #3390ec;
 }
 
