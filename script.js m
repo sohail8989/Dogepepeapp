@@ -56,10 +56,12 @@ function updateUI() {
 }
 function inviteFriend() {
   const userId = Telegram.WebApp.initDataUnsafe?.user?.id || "123456";
-  const refLink = "https://t.me/" + botUsername + "?start=ref" + userId;
+
+  // Corrected Direct Bot Link
+  const refLink = "https://t.me/Dogepepeofficialcoinbot?start=ref" + userId;
   const shareText = "Join Dogepepe & earn coins together!";
 
   const telegramShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(refLink) + "&text=" + encodeURIComponent(shareText);
-  
+
   Telegram.WebApp.openTelegramLink(telegramShareUrl);
 }
