@@ -58,7 +58,19 @@ function inviteFriend() {
   const userId = Telegram.WebApp.initDataUnsafe?.user?.id || "123456";
 
   // Corrected Direct Bot Link
-  const refLink = "https://t.me/Dogepepeofficialcoinbot?start=ref" + userId;
+function inviteFriend() {
+  const userId = Telegram.WebApp.initDataUnsafe?.user?.id || "7824642832";
+  
+  // start=ref_ ke baad userId aani chahiye
+  const refLink = "https://t.me/Dogepepeofficialcoinbot?start=ref_" + userId;
+  const shareText = "🐸 Join Dogepepe Tap App and get 1,000,000 Coins ($233 USD) free!";
+
+  const telegramShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(refLink) + "&text=" + encodeURIComponent(shareText);
+  
+  Telegram.WebApp.openTelegramLink(telegramShareUrl);
+}
+
+
   const shareText = "Join Dogepepe & earn coins together!";
 
   const telegramShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(refLink) + "&text=" + encodeURIComponent(shareText);
