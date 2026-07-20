@@ -122,20 +122,40 @@
   </div>
 
   <script>
-    const tg = window.Telegram ? window.Telegram.WebApp : null;
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) tg.expand();
 
-    // Tap System
-    let balance = 0;
+    // 1. Data Load System
+    let balance = parseFloat(localStorage.getItem('doge_balance')) || 0;
+    let earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
+    let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 1000000;
+
     const balanceEl = document.getElementById('balance');
     const tapBtn = document.getElementById('tap-btn');
 
-    tapBtn.addEventListener('click', () => {
-      balance += 10;
-      balanceEl.innerText = balance.toLocaleString();
-    });
+    // UI Update and Save Function
+    function updateUI() {
+      if (balanceEl) balanceEl.innerText = Math.floor(balance).toLocaleString();
+      localStorage.setItem('doge_balance', balance);
+      localStorage.setItem('doge_tap', earnPerTap);
+      localStorage.setItem('doge_profit', profitPerHour);
+    }
 
-    // Tab Navigation
+    // 2. Tap Listener
+    if (tapBtn) {
+      tapBtn.addEventListener('click', () => {
+        balance += earnPerTap;
+        updateUI();
+      });
+    }
+
+    // 3. Profit Per Hour (Har 1 sec mein add hoga)
+    setInterval(() => {
+      balance += (profitPerHour / 3600);
+      updateUI();
+    }, 1000);
+
+    // 4. Tab Navigation
     function switchTab(tabId, el) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -144,19 +164,23 @@
       el.classList.add('active');
     }
 
-    // Direct Fixed Share Function
+    // 5. Direct Fixed Share Link
     function shareInviteLink() {
-  const botUsername = "Dogepepeofficialcoinbot"; 
-  const userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "7824642832";
-  
-  const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=%F0%9F%90%B8%20Join%20Dogepepe%20Tap%20App%20and%20get%201,000,000%20Coins%20free!`;
+      const botUsername = "Dogepepeofficialcoinbot"; 
+      const userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "7824642832";
+      
+      const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=%F0%9F%90%B8%20Join%20Dogepepe%20Tap%20App%20and%20get%201,000,000%20Coins%20free!`;
 
-  if (tg && tg.openTelegramLink) {
-    tg.openTelegramLink(shareUrl);
-  } else {
-    window.open(shareUrl, '_blank');
-  }
-}
+      if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(shareUrl);
+      } else {
+        window.open(shareUrl, '_blank');
+      }
+    }
+
+    // Initial Load
+    updateUI();
+
 
   </script>
 </body>
