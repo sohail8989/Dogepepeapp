@@ -18,7 +18,38 @@
       flex-direction: column;
       overflow: hidden;
     }
-    
+      .daily-container {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .daily-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .claim-btn {
+    background: #ffc107;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    transition: 0.3s;
+  }
+  .claim-btn:disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+
     /* Top Header Section */
     .header-container { width: 100%; }
     .top-stats { display: flex; justify-content: space-around; padding: 10px; background: #151d2a; }
@@ -140,6 +171,17 @@
       <h2>Airdrop Tasks</h2>
       <p style="margin-top: 10px; color: #aaa;">Connect your TON wallet soon to qualify for Airdrop.</p>
           <!-- Tasks List Start -->
+<!-- Daily Check-in Card -->
+<div class="daily-container">
+  <div class="daily-title">📅 Daily Reward</div>
+  <p id="daily-status" style="font-size: 12px; color: #ccc; margin-bottom: 10px;">
+    Claim your daily bonus!
+  </p>
+  <button id="daily-claim-btn" class="claim-btn" onclick="claimDailyReward()">
+    Claim Reward (+100,000)
+  </button>
+</div>
+
     <div style="margin-top: 20px; text-align: left;">
         <div style="background: rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
             <div>
@@ -309,6 +351,66 @@ function completeTask(taskId, url, reward) {
     }, 1000);
 }
 
+// Daily Check-in Logic
+const DAILY_REWARD_AMOUNT = 100000;
+const COOLDOWN_HOURS = 24;
+
+function checkDailyStatus() {
+  const lastClaim = localStorage.getItem('lastDailyClaim');
+  const claimBtn = document.getElementById('daily-claim-btn');
+  const statusTxt = document.getElementById('daily-status');
+
+  if (!claimBtn || !statusTxt) return;
+
+  if (lastClaim) {
+    const nextClaimTime = parseInt(lastClaim) + (COOLDOWN_HOURS * 60 * 60 * 1000);
+    const now = Date.now();
+
+    if (now < nextClaimTime) {
+      const diffMs = nextClaimTime - now;
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      claimBtn.disabled = true;
+      claimBtn.innerText = "Claimed Today";
+      statusTxt.innerText = `Next reward in: ${hours}h ${minutes}m`;
+      return;
+    }
+  }
+
+  claimBtn.disabled = false;
+  claimBtn.innerText = "Claim Reward (+100,000)";
+  statusTxt.innerText = "Claim your daily bonus!";
+}
+
+function claimDailyReward() {
+  const lastClaim = localStorage.getItem('lastDailyClaim');
+  const now = Date.now();
+
+  if (lastClaim) {
+    const nextClaimTime = parseInt(lastClaim) + (COOLDOWN_HOURS * 60 * 60 * 1000);
+    if (now < nextClaimTime) return;
+  }
+
+  // Coins add karne ki logic
+  if (typeof userBalance !== 'undefined') {
+    userBalance += DAILY_REWARD_AMOUNT;
+  } else if (typeof balance !== 'undefined') {
+    balance += DAILY_REWARD_AMOUNT;
+  }
+
+  localStorage.setItem('lastDailyClaim', now.toString());
+  
+  if (typeof updateBalanceUI === 'function') {
+    updateBalanceUI();
+  }
+
+  alert("Congratulations! You claimed +100,000 coins!");
+  checkDailyStatus();
+}
+
+document.addEventListener('DOMContentLoaded', checkDailyStatus);
+setInterval(checkDailyStatus, 60000);
 
   </script>
 </body>
