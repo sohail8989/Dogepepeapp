@@ -1,44 +1,125 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
 body {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    text-align: center;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .container {
-    width: 90%;
-    max-width: 400px;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-h1 {
-    color: #f39c12;
+.stats-card {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background: #1e293b;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #334155;
 }
 
-.score-board {
-    font-size: 24px;
-    margin: 20px 0;
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.balance-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.coin-icon {
+  width: 40px;
+  height: 40px;
+}
+
+#score {
+  font-size: 38px;
+  font-weight: 800;
+  color: #f59e0b;
+}
+
+.tap-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
 }
 
 #tap-btn {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    border: 5px solid #2ecc71;
-    background-color: #27ae60;
-    color: white;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    outline: none;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 8px solid #22c55e;
+  background: radial-gradient(circle, #15803d 0%, #052e16 100%);
+  font-size: 90px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+  transition: transform 0.05s ease;
 }
 
 #tap-btn:active {
-    transform: scale(0.95);
-    background-color: #219150;
+  transform: scale(0.92);
 }
+
+.footer-stats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.energy-bar-container {
+  font-size: 16px;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #eab308, #ca8a04);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.upgrade-btn:active {
+  opacity: 0.8;
+}
+

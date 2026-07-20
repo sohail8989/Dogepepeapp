@@ -1,25 +1,48 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doge Pepe Tap</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Doge Pepe Tap</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Doge Pepe Tap</h1>
-        <div class="score-board">
-            <h2>Score: <span id="score">0</span></h2>
-        </div>
-        
-        <div class="tap-area">
-            <button id="tap-btn">🐸 TAP!</button>
-        </div>
+  <div class="container">
+    <!-- Header Metrics -->
+    <div class="stats-card">
+      <div class="stat-box">
+        <span class="stat-label">Total Supply</span>
+        <span class="stat-value">420M</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Profit / Hour</span>
+        <span class="stat-value" id="pph">+0</span>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Main Balance -->
+    <div class="balance-container">
+      <img src="https://cryptologos.cc/logos/pepe-pepe-logo.png" alt="Coin" class="coin-icon">
+      <h1 id="score">0</h1>
+    </div>
+
+    <!-- Tap Area -->
+    <div class="tap-area">
+      <button id="tap-btn">🐸</button>
+    </div>
+
+    <!-- Energy & Upgrades -->
+    <div class="footer-stats">
+      <div class="energy-bar-container">
+        ⚡ <span id="energy">1000</span> / 1000
+      </div>
+      <button id="upgrade-btn" class="upgrade-btn">
+        🚀 Upgrade PPH (Cost: <span id="upgrade-cost">50</span>)
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
