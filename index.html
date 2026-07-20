@@ -1,361 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dogepepe Tap App</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Dogepepe Tap App</title>
+  
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- TONConnect SDK -->
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        body {
-            background-color: #0b101d;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            background: #121829;
-            min-height: 100vh;
-            padding: 20px 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
+    body {
+      background-color: #0d131d;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-        /* Top Header Stats */
-        .stats-grid {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+    /* Top Stats Header */
+    .top-stats {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 10px;
+      gap: 6px;
+    }
 
-        .stat-card {
-            background: #1a2238;
-            border: 1px solid #2a3554;
-            border-radius: 12px;
-            padding: 10px 12px;
-            text-align: center;
-        }
+    .stat-card {
+      background: #18222d;
+      border: 1px solid #233140;
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+      flex: 1;
+    }
 
-        .stat-label {
-            font-size: 11px;
-            color: #8f9bba;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .stat-label {
+      font-size: 10px;
+      color: #8b9eb0;
+      margin-bottom: 3px;
+    }
 
-        .stat-value {
-            font-size: 15px;
-            font-weight: bold;
-            color: #00ff88;
-            margin-top: 4px;
-        }
+    .stat-val {
+      font-size: 13px;
+      font-weight: bold;
+      color: #4cd964;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
 
-        /* Value Banner ($200 per 1M coins) */
-        .rate-banner {
-            background: linear-gradient(90deg, rgba(255,170,0,0.15) 0%, rgba(255,215,0,0.25) 100%);
-            border: 1px solid #ffaa00;
-            border-radius: 20px;
-            padding: 6px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #ffcc00;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 20px;
-        }
+    /* Total Supply Banner */
+    .supply-banner {
+      background: rgba(24, 34, 45, 0.6);
+      border: 1px dashed #233140;
+      border-radius: 8px;
+      margin: 0 10px 10px;
+      padding: 6px;
+      text-align: center;
+      font-size: 12px;
+      color: #8b9eb0;
+    }
 
-        /* Balance Display */
-        .balance-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .supply-banner span {
+      color: #4cd964;
+      font-weight: bold;
+    }
 
-        .balance-title {
-            font-size: 12px;
-            color: #8f9bba;
-            margin-bottom: 4px;
-        }
+    /* Tab Content Wrappers */
+    .tab-content {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px 20px;
+      overflow-y: auto;
+    }
 
-        .main-balance {
-            font-size: 38px;
-            font-weight: 800;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+    .tab-content.active {
+      display: flex;
+    }
 
-        /* Tap Area */
-        .tap-area {
-            position: relative;
-            width: 230px;
-            height: 230px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #00ff88 0%, #008844 100%);
-            padding: 8px;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-            cursor: pointer;
-            transition: transform 0.05s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    /* Main Balance */
+    .balance-container {
+      text-align: center;
+      margin-top: 5px;
+    }
 
-        .tap-area:active {
-            transform: scale(0.96);
-        }
+    .balance-val {
+      font-size: 38px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
 
-        .tap-inner {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #121829;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+    .coin-icon-small {
+      width: 32px;
+      height: 32px;
+    }
 
-        .tap-avatar {
-            font-size: 110px;
-        }
+    .level-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 12px;
+      color: #8b9eb0;
+      margin-top: 8px;
+    }
 
-        /* Energy & Actions Section */
-        .actions-section {
-            width: 100%;
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #18222d;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
 
-        .energy-bar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: #38ef7d;
-            padding: 0 4px;
-        }
+    .progress-fill {
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, #3290ec, #4cd964);
+    }
 
-        /* Referral Promo Card */
-        .referral-card {
-            background: linear-gradient(135deg, #1f2942 0%, #111726 100%);
-            border: 1px dashed #3a4b73;
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* Tap Target Area */
+    .tap-area {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(76,217,100,0.2) 0%, rgba(0,0,0,0) 70%);
+      box-shadow: 0 0 25px rgba(76, 217, 100, 0.4);
+      cursor: pointer;
+    }
 
-        .ref-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+    .tap-coin-img {
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      object-fit: cover;
+      transition: transform 0.05s ease;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
 
-        .ref-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffffff;
-        }
+    .tap-coin-img:active {
+      transform: scale(0.96);
+    }
 
-        .ref-sub {
-            font-size: 11px;
-            color: #00ff88;
-        }
+    /* Tap Floating Number Effect */
+    .floating-num {
+      position: absolute;
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffffff;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+    }
 
-        .ref-btn {
-            background: #ffaa00;
-            color: #000;
-            font-weight: bold;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-80px); }
+    }
 
-        /* Buttons */
-        .upgrade-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #ff9900 0%, #ffcc00 100%);
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
-        }
+    /* Energy Bar */
+    .energy-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        /* Floating +1 Text Animation */
-        .tap-popup {
-            position: absolute;
-            color: #ffffff;
-            font-size: 28px;
-            font-weight: bold;
-            animation: floatUp 0.8s ease-out forwards;
-            pointer-events: none;
-        }
+    .energy-text {
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-50px); }
-        }
-    </style>
+    .boost-btn {
+      background: #18222d;
+      border: 1px solid #233140;
+      color: #ff9500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    /* Custom Screen Pages (Friends, Airdrop, etc) */
+    .page-card {
+      background: #18222d;
+      border: 1px solid #233140;
+      border-radius: 12px;
+      padding: 16px;
+      width: 100%;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .action-btn {
+      background: #2aabee;
+      color: #ffffff;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      margin-top: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    #ton-connect-btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      background: #141c24;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 12px;
+      border-top: 1px solid #1e2a38;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #6c7e8e;
+      font-size: 11px;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-item i {
+      font-size: 18px;
+    }
+
+    .nav-item.active {
+      color: #2aabee;
+    }
+  </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <!-- Top Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Total Supply</div>
-            <div class="stat-value" style="color: #8f9bba;">420M</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Profit / Hour</div>
-            <div class="stat-value" id="pph-value">+0</div>
-        </div>
+  <!-- Top Info Header -->
+  <div class="top-stats">
+    <div class="stat-card">
+      <div class="stat-label">Earn per tap</div>
+      <div class="stat-val"><i class="fa-solid fa-coins" style="color:#ffcc00"></i> +10</div>
     </div>
-
-    <!-- Live Rate Banner -->
-    <div class="rate-banner">
-        🔥 Est. Value: <span>1,000,000 Coins ≈ $200 USD</span>
+    <div class="stat-card">
+      <div class="stat-label">Coins to level up</div>
+      <div class="stat-val" style="color:#3290ec">10M</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-label">Profit per hour</div>
+      <div class="stat-val"><i class="fa-solid fa-coins" style="color:#ffcc00"></i> +39.12K</div>
+    </div>
+  </div>
 
-    <!-- Balance Section -->
+  <div class="supply-banner">Total Supply: <span>420M</span></div>
+
+  <!-- TAB 1: Exchange / Tap Screen -->
+  <div id="tab-exchange" class="tab-content active">
     <div class="balance-container">
-        <div class="balance-title">TOTAL BALANCE</div>
-        <div class="main-balance">
-            🐸 <span id="balance">0</span>
+      <div class="balance-val">
+        <i class="fa-solid fa-coins" style="color:#ffcc00"></i>
+        <span id="coin-count">0</span>
+      </div>
+      <div style="width: 260px; margin: 0 auto;">
+        <div class="level-info">
+          <span>Epic &gt;</span>
+          <span>Level <strong>6/10</strong></span>
         </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Tap Button -->
-    <div class="tap-area" id="tap-btn">
-        <div class="tap-inner">
-            <div class="tap-avatar">🐸</div>
-        </div>
+    <!-- Tap Target Center Area -->
+    <div class="tap-area" id="tap-target">
+      <!-- Direct Coin Image Replacement -->
+      <img src="dogepepe.png" alt="Dogepepe Coin" class="tap-coin-img">
     </div>
 
-    <!-- Bottom Actions & Info -->
-    <div class="actions-section">
-        
-        <!-- Energy -->
-        <div class="energy-bar-container">
-            <span>⚡ Energy</span>
-            <span id="energy">1000 / 1000</span>
-        </div>
-
-        <!-- Referral Bonus Card -->
-        <div class="referral-card">
-            <div class="ref-info">
-                <div class="ref-title">👥 Invite 1 Friend</div>
-                <div class="ref-sub">Get +1,000,000 Coins ($200)</div>
-            </div>
-            <button class="ref-btn" onclick="alert('Referral link copied!')">Invite</button>
-        </div>
-
-        <!-- Upgrade Button -->
-        <button class="upgrade-btn" id="upgrade-btn">
-            🚀 Upgrade PPH (Cost: 50)
-        </button>
+    <!-- Energy Section -->
+    <div class="energy-container">
+      <div class="energy-text">
+        <i class="fa-solid fa-bolt" style="color:#ffcc00"></i>
+        <span id="energy-count">1000</span> / 1000
+      </div>
+      <div class="boost-btn">
+        <i class="fa-solid fa-rocket"></i> Boost
+      </div>
     </div>
+  </div>
 
-</div>
+  <!-- TAB 2: Mine Screen -->
+  <div id="tab-mine" class="tab-content">
+    <h2 style="margin-top: 20px;">Mining Dashboard</h2>
+    <div class="page-card">
+      <p>Upgrade your cards to earn passive profit per hour!</p>
+    </div>
+  </div>
 
-<script>
-    let balance = 0;
-    let pph = 0;
+  <!-- TAB 3: Friends (Invite Link Fix) -->
+  <div id="tab-friends" class="tab-content">
+    <h2 style="margin-top: 10px;">Invite Friends</h2>
+    <div class="page-card">
+      <i class="fa-solid fa-users" style="font-size: 40px; color: #2aabee; margin-bottom: 10px;"></i>
+      <h3>Invite friends and get bonuses!</h3>
+      <p style="font-size: 13px; color: #8b9eb0; margin-top: 5px;">+2,000 Dogepepe for you and your friend</p>
+      
+      <button class="action-btn" onclick="inviteFriend()">
+        <i class="fa-solid fa-user-plus"></i> Invite a Friend
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 4: Earn Screen -->
+  <div id="tab-earn" class="tab-content">
+    <h2 style="margin-top: 20px;">Earn Tasks</h2>
+    <div class="page-card">
+      <p>Complete daily tasks and join channels to collect reward coins.</p>
+    </div>
+  </div>
+
+  <!-- TAB 5: Airdrop & Wallet Connect -->
+  <div id="tab-airdrop" class="tab-content">
+    <h2 style="margin-top: 10px;">Airdrop Tasks</h2>
+    <div class="page-card">
+      <i class="fa-solid fa-wallet" style="font-size: 36px; color: #4cd964; margin-bottom: 8px;"></i>
+      <h3>Connect TON Wallet</h3>
+      <p style="font-size: 12px; color: #8b9eb0; margin-top: 4px;">
+        Connect your Web3 wallet to receive future Dogepepe token airdrop rewards.
+      </p>
+
+      <!-- TON Connect Official Component container -->
+      <div id="ton-connect-btn"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Tabs -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('tab-exchange', this)">
+      <i class="fa-solid fa-fire"></i>
+      <span>Exchange</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-mine', this)">
+      <i class="fa-solid fa-pickaxe"></i>
+      <span>Mine</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-friends', this)">
+      <i class="fa-solid fa-user-group"></i>
+      <span>Friends</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-earn', this)">
+      <i class="fa-solid fa-sack-dollar"></i>
+      <span>Earn</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-airdrop', this)">
+      <i class="fa-solid fa-coins"></i>
+      <span>Airdrop</span>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Telegram WebApp API
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.expand();
+
+    // Tapping System Logic
+    let coins = 0;
     let energy = 1000;
-    let maxEnergy = 1000;
-    let upgradeCost = 50;
+    const coinsEl = document.getElementById('coin-count');
+    const energyEl = document.getElementById('energy-count');
+    const tapTarget = document.getElementById('tap-target');
 
-    const balanceEl = document.getElementById('balance');
-    const pphEl = document.getElementById('pph-value');
-    const energyEl = document.getElementById('energy');
-    const tapBtn = document.getElementById('tap-btn');
-    const upgradeBtn = document.getElementById('upgrade-btn');
+    tapTarget.addEventListener('click', (e) => {
+      if (energy >= 10) {
+        coins += 10;
+        energy -= 10;
+        coinsEl.innerText = coins.toLocaleString();
+        energyEl.innerText = energy;
 
-    // Tap Function
-    tapBtn.addEventListener('click', (e) => {
-        if (energy > 0) {
-            balance += 1;
-            energy -= 1;
-            updateUI();
-            
-            // Create Floating +1 Effect
-            const rect = tapBtn.getBoundingClientRect();
-            const popup = document.createElement('div');
-            popup.className = 'tap-popup';
-            popup.innerText = '+1';
-            popup.style.left = `${e.clientX - rect.left - 10}px`;
-            popup.style.top = `${e.clientY - rect.top - 20}px`;
-            tapBtn.appendChild(popup);
-
-            setTimeout(() => popup.remove(), 800);
-        }
+        // Visual +10 Animation
+        const floatingNum = document.createElement('div');
+        floatingNum.className = 'floating-num';
+        floatingNum.innerText = '+10';
+        
+        const rect = tapTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        floatingNum.style.left = `${x}px`;
+        floatingNum.style.top = `${y}px`;
+        
+        tapTarget.appendChild(floatingNum);
+        setTimeout(() => floatingNum.remove(), 800);
+      }
     });
 
-    // Upgrade PPH Function
-    upgradeBtn.addEventListener('click', () => {
-        if (balance >= upgradeCost) {
-            balance -= upgradeCost;
-            pph += 100; // Har upgrade par 100 PPH barhega
-            upgradeCost = Math.floor(upgradeCost * 1.5); // Cost increase
-            upgradeBtn.innerText = `🚀 Upgrade PPH (Cost: ${upgradeCost})`;
-            updateUI();
-        } else {
-            alert('Not enough coins!');
-        }
-    });
-
-    // Auto Energy Regeneration (1 per second)
-    setInterval(() => {
-        if (energy < maxEnergy) {
-            energy += 1;
-            updateUI();
-        }
-    }, 1000);
-
-    // Passive Income (PPH per hour broken down to per second)
-    setInterval(() => {
-        if (pph > 0) {
-            balance += Math.floor(pph / 3600) || 1;
-            updateUI();
-        }
-    }, 1000);
-
-    function updateUI() {
-        balanceEl.innerText = balance.toLocaleString();
-        pphEl.innerText = `+${pph.toLocaleString()}`;
-        energyEl.innerText = `${energy} / ${maxEnergy}`;
+    // Navigation Switch Logic
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      el.classList.add('active');
     }
-</script>
 
+    // Invite Friend Function Fix
+    function inviteFriend() {
+      // Replace with your actual bot username
+      const botUsername = "DogepepeBot"; 
+      const referralLink = `https://t.me/${botUsername}?start=ref_123456`;
+      const shareText = "Join Dogepepe Tap & Earn free crypto coins!";
+      
+      const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`;
+      
+      if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(fullUrl);
+      } else {
+        window.open(fullUrl, '_blank');
+      }
+    }
+
+    // TON Wallet Connect Integration
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test-manifest.json',
+        buttonRootId: 'ton-connect-btn'
+    });
+  </script>
 </body>
 </html>
