@@ -54,15 +54,12 @@ function updateUI() {
   energyEl.innerText = energy;
   upgradeCostEl.innerText = upgradeCost.toLocaleString();
 }
-// Invite Friend / Referral Logic
-const botUsername = "Dogepepeofficialcoinbot";
-
-function shareReferralLink() {
+function inviteFriend() {
   const userId = Telegram.WebApp.initDataUnsafe?.user?.id || "123456";
-  const refLink = `https://t.me/${botUsername}?start=ref${userId}`;
+  const refLink = "https://t.me/" + botUsername + "?start=ref" + userId;
   const shareText = "Join Dogepepe & earn coins together!";
 
-  const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`;
+  const telegramShareUrl = "https://t.me/share/url?url=" + encodeURIComponent(refLink) + "&text=" + encodeURIComponent(shareText);
   
   Telegram.WebApp.openTelegramLink(telegramShareUrl);
 }
