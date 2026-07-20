@@ -146,17 +146,18 @@
 
     // Direct Fixed Share Function
     function shareInviteLink() {
-      const botUsername = "DogepepeBot"; 
-      const userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "7824642832";
-      
-      const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=%F0%9F%90%B8%20Join%20Dogepepe%20Tap%20App%20and%20get%201,000,000%20Coins%20($233%20USD)%20free!`;
+  const botUsername = "Dogepepeofficialcoinbot"; 
+  const userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "7824642832";
+  
+  const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=%F0%9F%90%B8%20Join%20Dogepepe%20Tap%20App%20and%20get%201,000,000%20Coins%20free!`;
 
-      if (tg && tg.openTelegramLink) {
-        tg.openTelegramLink(shareUrl);
-      } else {
-        window.open(shareUrl, '_blank');
-      }
-    }
+  if (tg && tg.openTelegramLink) {
+    tg.openTelegramLink(shareUrl);
+  } else {
+    window.open(shareUrl, '_blank');
+  }
+}
+
   </script>
 </body>
 </html>
