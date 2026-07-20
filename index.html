@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +14,7 @@
     <div class="top-stats">
       <div class="stat-card">
         <span class="stat-title">Earn per tap</span>
-        <span class="stat-val earn-tap">🪙 +10</span>
+        <span class="stat-val earn-tap" id="earn-per-tap-val">🪙 +10</span>
       </div>
       <div class="stat-card">
         <span class="stat-title">Coins to level up</span>
@@ -23,7 +22,7 @@
       </div>
       <div class="stat-card">
         <span class="stat-title">Profit per hour</span>
-        <span class="stat-val profit-hr">🪙 +1.00M</span>
+        <span class="stat-val profit-hr" id="pph-val">🪙 +1.00M</span>
       </div>
     </div>
 
@@ -33,19 +32,19 @@
       🔥 Est. Value: 1,000,000 Coins ≈ $233 USD
     </div>
 
-    <!-- MAIN VIEW (EXCHANGE / TAPPER) -->
+    <!-- TAB 1: EXCHANGE (MAIN TAPPER) -->
     <div id="view-exchange" class="tab-view active">
       <div class="score-display">
-        <img src="https://cryptologos.cc/logos/dogecoin-doge-logo.png" alt="coin" class="main-coin-icon">
+        <span class="coin-icon-img">🪙</span>
         <h1 id="score">1,486,910</h1>
       </div>
 
       <div class="level-info">
-        <span class="rank-name" id="rank-name">Epic &gt;</span>
-        <span class="level-num" id="level-num">Level 6/10</span>
+        <span class="rank-name">Epic &gt;</span>
+        <span class="level-num">Level 6/10</span>
       </div>
       <div class="progress-bar-bg">
-        <div class="progress-fill" id="progress-fill"></div>
+        <div class="progress-fill"></div>
       </div>
 
       <!-- Dogepepe Tap Button -->
@@ -68,82 +67,105 @@
       </div>
     </div>
 
-    <!-- MINE VIEW -->
+    <!-- TAB 2: MINE -->
     <div id="view-mine" class="tab-view">
-      <h2>Mining Cards</h2>
-      <p>Upgrade items to increase profit per hour!</p>
-      <div class="task-card">
-        <div>
-          <h3>🚀 GPU Rig</h3>
-          <p>+10.00K Profit/hr</p>
+      <h2 class="view-title">Mining Upgrades</h2>
+      <p class="view-sub">Buy cards to increase your Profit per hour!</p>
+      
+      <div class="mine-grid">
+        <div class="task-card">
+          <div class="card-info">
+            <h3>🌾 Pepe Farm</h3>
+            <p>+5.00K Profit/hr</p>
+          </div>
+          <button class="action-btn" onclick="buyUpgrade(50000, 5000, this)">Cost: 50,000</button>
         </div>
-        <button class="action-btn" onclick="alert('Upgrade Coming Soon!')">Cost: 50K</button>
+
+        <div class="task-card">
+          <div class="card-info">
+            <h3>⚡ Crypto Miner</h3>
+            <p>+25.00K Profit/hr</p>
+          </div>
+          <button class="action-btn" onclick="buyUpgrade(200000, 25000, this)">Cost: 200,000</button>
+        </div>
+
+        <div class="task-card">
+          <div class="card-info">
+            <h3>🏛️ Doge Vault</h3>
+            <p>+100.00K Profit/hr</p>
+          </div>
+          <button class="action-btn" onclick="buyUpgrade(1000000, 100000, this)">Cost: 1,000,000</button>
+        </div>
       </div>
     </div>
 
-    <!-- FRIENDS VIEW (REFERRAL SYSTEM) -->
+    <!-- TAB 3: FRIENDS (REFERRAL) -->
     <div id="view-friends" class="tab-view">
-      <h2>Invite Friends</h2>
-      <p>Invite friends and earn huge coin bonuses!</p>
+      <h2 class="view-title">Invite Friends!</h2>
+      <p class="view-sub">You and your friend will receive bonuses</p>
+
       <div class="ref-card">
-        <h3>🎁 Referral Reward</h3>
-        <p>Get 1,000,000 Coins for each friend who joins!</p>
+        <div class="gift-icon">🎁</div>
+        <h3>Invite a friend</h3>
+        <p><strong>+1,000,000 Coins</strong> for you and your friend</p>
         <button class="action-btn share-btn" onclick="inviteFriend()">📩 Invite a Friend</button>
       </div>
     </div>
 
-    <!-- EARN VIEW (TASKS) -->
+    <!-- TAB 4: EARN -->
     <div id="view-earn" class="tab-view">
-      <h2>Earn Tasks</h2>
+      <h2 class="view-title">Earn Tasks</h2>
       <div class="task-list">
         <div class="task-card">
-          <div>
-            <h3>📺 Subscribe Telegram</h3>
+          <div class="card-info">
+            <h3>📢 Telegram Channel</h3>
             <p>+100,000 Coins</p>
           </div>
-          <button class="action-btn" onclick="doTask(this, 100000)">Join</button>
+          <button class="action-btn" onclick="doTask(this, 100000, 'https://t.me/Dogepepeofficialcoinbot')">Join</button>
         </div>
         <div class="task-card">
-          <div>
-            <h3>🐤 Follow Twitter/X</h3>
+          <div class="card-info">
+            <h3>🐤 Follow Twitter</h3>
             <p>+50,000 Coins</p>
           </div>
-          <button class="action-btn" onclick="doTask(this, 50000)">Follow</button>
+          <button class="action-btn" onclick="doTask(this, 50000, 'https://x.com')">Follow</button>
         </div>
       </div>
     </div>
 
-    <!-- AIRDROP VIEW -->
+    <!-- TAB 5: AIRDROP -->
     <div id="view-airdrop" class="tab-view">
-      <h2>Airdrop</h2>
+      <h2 class="view-title">Airdrop Tasks</h2>
       <div class="airdrop-box">
-        <p>🌐 Connect your TON Wallet for upcoming $DOGEPEPE Token Distribution!</p>
-        <button class="action-btn" onclick="alert('Wallet Connect integration coming in V2!')">Connect Wallet</button>
+        <div class="airdrop-icon">🌐</div>
+        <h3>Connect your TON Wallet</h3>
+        <p>Connect your Web3 wallet for upcoming $DOGEPEPE distribution.</p>
+        <button id="wallet-btn" class="action-btn share-btn" onclick="connectWallet()">💎 Connect Wallet</button>
       </div>
     </div>
 
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-      <button class="nav-item active" onclick="switchTab('exchange', this)">
+      <div class="nav-item active" onclick="switchTab('exchange', this)">
         <span class="nav-icon">💧</span>
         <span class="nav-label">Exchange</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('mine', this)">
+      </div>
+      <div class="nav-item" onclick="switchTab('mine', this)">
         <span class="nav-icon">⛏️</span>
         <span class="nav-label">Mine</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('friends', this)">
+      </div>
+      <div class="nav-item" onclick="switchTab('friends', this)">
         <span class="nav-icon">👥</span>
         <span class="nav-label">Friends</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('earn', this)">
+      </div>
+      <div class="nav-item" onclick="switchTab('earn', this)">
         <span class="nav-icon">💰</span>
         <span class="nav-label">Earn</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('airdrop', this)">
-        <span class="nav-icon">🪙</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('airdrop', this)">
+        <span class="nav-icon">🏛️</span>
         <span class="nav-label">Airdrop</span>
-      </button>
+      </div>
     </div>
 
   </div>

@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   user-select: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
@@ -61,7 +61,7 @@ body {
   text-align: center;
   font-size: 11px;
   color: #8192a4;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 .supply-bar span { color: #2bb473; font-weight: bold; }
 
@@ -75,17 +75,30 @@ body {
   margin-top: 6px;
 }
 
-/* Tab Views */
+/* Tab Views Management */
 .tab-view {
   display: none;
   flex: 1;
   flex-direction: column;
   align-items: center;
   padding-top: 15px;
+  overflow-y: auto;
+  padding-bottom: 70px;
 }
 
 .tab-view.active {
   display: flex;
+}
+
+.view-title {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.view-sub {
+  font-size: 12px;
+  color: #8192a4;
+  margin-bottom: 12px;
 }
 
 /* Score Section */
@@ -95,9 +108,8 @@ body {
   gap: 8px;
 }
 
-.main-coin-icon {
-  width: 32px;
-  height: 32px;
+.coin-icon-img {
+  font-size: 28px;
 }
 
 #score {
@@ -129,7 +141,7 @@ body {
   background: #2bb473;
 }
 
-/* Pepe Tap Button UI */
+/* Pepe Tap Button */
 .coin-container {
   margin: auto 0;
   width: 210px;
@@ -182,7 +194,6 @@ body {
   height: 22px;
   background: #fff;
   border-radius: 50%;
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -218,7 +229,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
-  margin-bottom: 70px;
 }
 
 .energy-text {
@@ -236,7 +246,11 @@ body {
   cursor: pointer;
 }
 
-/* Cards UI for Friends & Tasks */
+/* Cards & Lists */
+.mine-grid, .task-list {
+  width: 100%;
+}
+
 .task-card, .ref-card, .airdrop-box {
   width: 100%;
   background: #17212b;
@@ -255,13 +269,21 @@ body {
   text-align: center;
 }
 
+.card-info h3 { font-size: 14px; }
+.card-info p { font-size: 12px; color: #2bb473; margin-top: 2px; }
+
+.gift-icon, .airdrop-icon {
+  font-size: 40px;
+}
+
 .action-btn {
   background: #3390ec;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 14px;
   border-radius: 8px;
   font-weight: bold;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -269,9 +291,10 @@ body {
   background: #2bb473;
   width: 100%;
   padding: 12px;
+  font-size: 14px;
 }
 
-/* Bottom Nav */
+/* Bottom Navigation Bar */
 .bottom-nav {
   position: absolute;
   bottom: 0;
@@ -283,6 +306,7 @@ body {
   justify-content: space-around;
   align-items: center;
   border-top: 1px solid #242f3d;
+  z-index: 100;
 }
 
 .nav-item {
@@ -294,6 +318,7 @@ body {
   align-items: center;
   font-size: 10px;
   cursor: pointer;
+  flex: 1;
 }
 
 .nav-item.active {
