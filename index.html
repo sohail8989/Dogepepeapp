@@ -2,173 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dogepepe Mini App</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #0d131d; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; text-align: center; }
+    
+    /* Top Stats Grid */
+    .top-stats { display: flex; justify-content: space-around; padding: 10px; background: #151d2a; }
+    .stat-box { background: #1c2738; padding: 8px 12px; border-radius: 8px; flex: 1; margin: 0 4px; font-size: 12px; }
+    .stat-val { color: #28a745; font-weight: bold; font-size: 14px; }
+    
+    /* Banner */
+    .est-banner { background: linear-gradient(90deg, #ff8c00, #ff5500); padding: 8px; margin: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; }
+
+    /* Tap Center Section */
+    .main-section { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .coin-btn { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #f39c12, #d35400); border: 4px solid #f1c40f; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 0 20px rgba(241, 196, 15, 0.4); }
+    .coin-btn:active { transform: scale(0.95); }
+
+    /* Bottom Navigation Bar */
+    .nav-bar { display: flex; justify-content: space-around; background: #151d2a; padding: 10px 0; border-top: 1px solid #233146; }
+    .nav-item { color: #8a9ba8; text-decoration: none; font-size: 11px; flex: 1; cursor: pointer; }
+    .nav-item.active { color: #3498db; }
+    
+    /* Dynamic Views */
+    .tab-content { display: none; padding: 20px; }
+    .tab-content.active { display: block; }
+  </style>
 </head>
 <body>
-  <div class="app-container">
-    
-    <!-- Top Header Stats -->
-    <div class="top-stats">
-      <div class="stat-card">
-        <span class="stat-title">Earn per tap</span>
-        <span class="stat-val earn-tap" id="earn-per-tap-val">🪙 +10</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-title">Coins to level up</span>
-        <span class="stat-val level-up">10M</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-title">Profit per hour</span>
-        <span class="stat-val profit-hr" id="pph-val">🪙 +1.00M</span>
-      </div>
-    </div>
 
-    <!-- Total Supply & Est Value Banner -->
-    <div class="supply-bar">Total Supply: <span>420M</span></div>
-    <div class="est-value-banner">
-      🔥 Est. Value: 1,000,000 Coins ≈ $233 USD
-    </div>
-
-    <!-- TAB 1: EXCHANGE -->
-    <div id="view-exchange" class="tab-view active-view">
-      <div class="score-display">
-        <span class="coin-icon-img">🪙</span>
-        <h1 id="score">1,486,910</h1>
-      </div>
-
-      <div class="level-info">
-        <span class="rank-name">Epic &gt;</span>
-        <span class="level-num">Level 6/10</span>
-      </div>
-      <div class="progress-bar-bg">
-        <div class="progress-fill"></div>
-      </div>
-
-      <!-- Main Coin Button -->
-      <div class="coin-container" id="tap-btn">
-        <div class="coin-inner">
-          <div class="pepe-face">
-            <div class="eyes"><span></span><span></span></div>
-            <div class="smile"></div>
-            <div class="coin-label">DOGEPEPE</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Energy and Boost -->
-      <div class="energy-container">
-        <div class="energy-text">
-          ⚡ <span id="energy">1000</span> / <span id="max-energy">1000</span>
-        </div>
-        <button class="boost-btn" onclick="boostEnergy()">🚀 Boost</button>
-      </div>
-    </div>
-
-    <!-- TAB 2: MINE -->
-    <div id="view-mine" class="tab-view">
-      <h2 class="view-title">Mining Cards</h2>
-      <p class="view-sub">Upgrade items to increase profit per hour!</p>
-      
-      <div class="mine-grid">
-        <div class="task-card">
-          <div class="card-info">
-            <h3>🌾 Pepe Farm</h3>
-            <p>+5.00K Profit/hr</p>
-          </div>
-          <button class="action-btn" onclick="buyUpgrade(50000, 5000, this)">Cost: 50K</button>
-        </div>
-
-        <div class="task-card">
-          <div class="card-info">
-            <h3>⚡ Crypto Rig</h3>
-            <p>+25.00K Profit/hr</p>
-          </div>
-          <button class="action-btn" onclick="buyUpgrade(200000, 25000, this)">Cost: 200K</button>
-        </div>
-
-        <div class="task-card">
-          <div class="card-info">
-            <h3>🏛️ Doge Vault</h3>
-            <p>+100.00K Profit/hr</p>
-          </div>
-          <button class="action-btn" onclick="buyUpgrade(1000000, 100000, this)">Cost: 1M</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: FRIENDS (INVITE) -->
-    <div id="view-friends" class="tab-view">
-      <h2 class="view-title">Invite Friends</h2>
-      <p class="view-sub">Share your referral link to earn bonus rewards</p>
-
-      <div class="ref-card">
-        <div class="gift-icon">🎁</div>
-        <h3>Invite a Friend</h3>
-        <p>+1,000,000 Coins for you and your friend!</p>
-        <button class="action-btn share-btn" onclick="inviteFriend()">📩 Invite a Friend</button>
-      </div>
-    </div>
-
-    <!-- TAB 4: EARN -->
-    <div id="view-earn" class="tab-view">
-      <h2 class="view-title">Earn Tasks</h2>
-      <div class="task-list">
-        <div class="task-card">
-          <div class="card-info">
-            <h3>📢 Telegram Channel</h3>
-            <p>+100,000 Coins</p>
-          </div>
-          <button class="action-btn" onclick="doTask(this, 100000, 'https://t.me/Dogepepeofficialcoinbot')">Join</button>
-        </div>
-        <div class="task-card">
-          <div class="card-info">
-            <h3>🐤 Follow Twitter</h3>
-            <p>+50,000 Coins</p>
-          </div>
-          <button class="action-btn" onclick="doTask(this, 50000, 'https://x.com')">Follow</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 5: AIRDROP -->
-    <div id="view-airdrop" class="tab-view">
-      <h2 class="view-title">Airdrop Tasks</h2>
-      <div class="airdrop-box">
-        <div class="airdrop-icon">🌐</div>
-        <h3>Connect TON Wallet</h3>
-        <p>Connect your Web3 wallet for upcoming $DOGEPEPE distribution.</p>
-        <button id="wallet-btn" class="action-btn share-btn" onclick="connectWallet()">💎 Connect Wallet</button>
-      </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <div class="bottom-nav">
-      <button type="button" class="nav-item active-nav" onclick="openTab('exchange', this)">
-        <span class="nav-icon">💧</span>
-        <span class="nav-label">Exchange</span>
-      </button>
-      <button type="button" class="nav-item" onclick="openTab('mine', this)">
-        <span class="nav-icon">⛏️</span>
-        <span class="nav-label">Mine</span>
-      </button>
-      <button type="button" class="nav-item" onclick="openTab('friends', this)">
-        <span class="nav-icon">👥</span>
-        <span class="nav-label">Friends</span>
-      </button>
-      <button type="button" class="nav-item" onclick="openTab('earn', this)">
-        <span class="nav-icon">💰</span>
-        <span class="nav-label">Earn</span>
-      </button>
-      <button type="button" class="nav-item" onclick="openTab('airdrop', this)">
-        <span class="nav-icon">🏛️</span>
-        <span class="nav-label">Airdrop</span>
-      </button>
-    </div>
-
+  <!-- Top Stats -->
+  <div class="top-stats">
+    <div class="stat-box">Earn per tap<br><span class="stat-val">+10</span></div>
+    <div class="stat-box">Coins to level up<br><span class="stat-val" style="color:#3498db">10M</span></div>
+    <div class="stat-box">Profit per hour<br><span class="stat-val">+1.00M</span></div>
   </div>
-  <script src="script.js"></script>
+
+  <div style="font-size: 12px; color: #8a9ba8; margin-top: 5px;">Total Supply: 420M</div>
+  <div class="est-banner">🔥 Est. Value: 1,000,000 Coins ≈ $233 USD</div>
+
+  <!-- TAB 1: Exchange / Tap Screen -->
+  <div id="exchange-tab" class="tab-content active main-section">
+    <h1 id="balance" style="font-size: 32px; margin-bottom: 20px;">0</h1>
+    <div class="coin-btn" id="tap-btn">🐸 TAP!</div>
+  </div>
+
+  <!-- TAB 2: Friends Section -->
+  <div id="friends-tab" class="tab-content">
+    <h2>Invite Friends</h2>
+    <p style="margin: 15px 0; color: #aaa;">Share your link and earn coins for every user who joins!</p>
+    <button onclick="shareInviteLink()" style="padding: 12px 20px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; width: 80%;">Invite a Friend 🚀</button>
+  </div>
+
+  <!-- TAB 3: Airdrop Section -->
+  <div id="airdrop-tab" class="tab-content">
+    <h2>Airdrop Tasks</h2>
+    <p style="margin-top: 10px; color: #aaa;">Connect your TON wallet soon to qualify for Airdrop.</p>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav-bar">
+    <div class="nav-item active" onclick="switchTab('exchange-tab', this)">💧<br>Exchange</div>
+    <div class="nav-item" onclick="switchTab('friends-tab', this)">👥<br>Friends</div>
+    <div class="nav-item" onclick="switchTab('airdrop-tab', this)">🏛️<br>Airdrop</div>
+  </div>
+
+  <script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) tg.expand();
+
+    // Tap System
+    let balance = 0;
+    const balanceEl = document.getElementById('balance');
+    const tapBtn = document.getElementById('tap-btn');
+
+    tapBtn.addEventListener('click', () => {
+      balance += 10;
+      balanceEl.innerText = balance.toLocaleString();
+    });
+
+    // Tab Navigation System
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // Invite Friend System (Airdrop/Referral Fix)
+    function shareInviteLink() {
+      const botUsername = "YOUR_BOT_USERNAME"; // Yahan apne BotFather ka username dalein (Bina @ ke)
+      const userId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "12345";
+      
+      const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=${userId}&text=Join%20Dogepepe%20and%20earn%20crypto!`;
+      
+      if (tg) {
+        tg.openTelegramLink(inviteUrl);
+      } else {
+        window.open(inviteUrl, '_blank');
+      }
+    }
+  </script>
 </body>
 </html>
