@@ -3,123 +3,304 @@
   margin: 0;
   padding: 0;
   user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-  background-color: #0f172a;
+  background-color: #0b141d;
   color: #ffffff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  overflow: hidden;
 }
 
-.container {
+.app-container {
   width: 100%;
-  max-width: 400px;
-  padding: 20px;
+  max-width: 440px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  padding: 12px;
+  position: relative;
 }
 
-.stats-card {
+/* Header Cards */
+.top-stats {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  background: #1e293b;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1px solid #334155;
+  gap: 6px;
 }
 
-.stat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.stat-card {
+  background: #17212b;
+  border-radius: 10px;
+  padding: 8px 4px;
+  flex: 1;
+  text-align: center;
+  border: 1px solid #242f3d;
 }
 
-.stat-label {
-  font-size: 12px;
-  color: #94a3b8;
+.stat-title {
+  font-size: 10px;
+  color: #8192a4;
+  display: block;
 }
 
-.stat-value {
-  font-size: 16px;
+.stat-val {
+  font-size: 11px;
   font-weight: bold;
-  color: #22c55e;
 }
 
-.balance-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.earn-tap { color: #2bb473; }
+.level-up { color: #3390ec; }
+.profit-hr { color: #2bb473; }
+
+.supply-bar {
+  text-align: center;
+  font-size: 11px;
+  color: #8192a4;
   margin-top: 10px;
 }
+.supply-bar span { color: #2bb473; font-weight: bold; }
 
-.coin-icon {
-  width: 40px;
-  height: 40px;
+.est-value-banner {
+  background: linear-gradient(90deg, #d96800, #ff8c00);
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+
+/* Tab Views */
+.tab-view {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+}
+
+.tab-view.active {
+  display: flex;
+}
+
+/* Score Section */
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.main-coin-icon {
+  width: 32px;
+  height: 32px;
 }
 
 #score {
-  font-size: 38px;
+  font-size: 32px;
   font-weight: 800;
-  color: #f59e0b;
 }
 
-.tap-area {
+.level-info {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #8192a4;
+  margin-top: 8px;
+}
+
+.progress-bar-bg {
+  width: 90%;
+  height: 6px;
+  background: #17212b;
+  border-radius: 10px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 60%;
+  height: 100%;
+  background: #2bb473;
+}
+
+/* Pepe Tap Button UI */
+.coin-container {
+  margin: auto 0;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2a3d31 0%, #0d1e15 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px 0;
-}
-
-#tap-btn {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border: 8px solid #22c55e;
-  background: radial-gradient(circle, #15803d 0%, #052e16 100%);
-  font-size: 90px;
+  box-shadow: 0 0 30px rgba(43, 180, 115, 0.3);
   cursor: pointer;
-  box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
   transition: transform 0.05s ease;
 }
 
-#tap-btn:active {
-  transform: scale(0.92);
+.coin-container:active {
+  transform: scale(0.95);
 }
 
-.footer-stats {
-  width: 100%;
+.coin-inner {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #e5b024;
+  border: 8px solid #fbd24e;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: center;
   align-items: center;
 }
 
-.energy-bar-container {
-  font-size: 16px;
-  font-weight: bold;
-  color: #38bdf8;
+.pepe-face {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #1e9d4a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-.upgrade-btn {
+.eyes {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.eyes span {
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eyes span::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.smile {
+  width: 65px;
+  height: 20px;
+  border-bottom: 4px solid #e72128;
+  border-radius: 0 0 20px 20px;
+}
+
+.coin-label {
+  position: absolute;
+  bottom: 14px;
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Footer Energy & Boost */
+.energy-container {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(90deg, #eab308, #ca8a04);
-  border: none;
-  border-radius: 10px;
-  color: #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  margin-bottom: 70px;
+}
+
+.energy-text {
+  font-size: 14px;
   font-weight: bold;
-  font-size: 15px;
+}
+
+.boost-btn {
+  background: #17212b;
+  border: 1px solid #2bb473;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.upgrade-btn:active {
-  opacity: 0.8;
+/* Cards UI for Friends & Tasks */
+.task-card, .ref-card, .airdrop-box {
+  width: 100%;
+  background: #17212b;
+  border: 1px solid #242f3d;
+  padding: 14px;
+  border-radius: 12px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+.ref-card, .airdrop-box {
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+
+.action-btn {
+  background: #3390ec;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.share-btn {
+  background: #2bb473;
+  width: 100%;
+  padding: 12px;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #17212b;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #242f3d;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: #8192a4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: #3390ec;
+}
+
+.nav-icon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
