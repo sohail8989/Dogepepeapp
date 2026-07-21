@@ -479,6 +479,37 @@ function checkDailyStatus() {
   claimBtn.innerText = "Claim Reward (+100,000)";
   statusTxt.innerText = "Claim your daily bonus!";
 }
+// 3. Profit Per Hour (PPH) Upgrade Logic
+function buyUpgrade() {
+  const upgradeCost = 500; 
+  if (balance >= upgradeCost) {
+    balance -= upgradeCost;
+    profitPerHour += 100000; 
+    updateUI();
+    alert("Upgrade Successful! Profit per hour increased.");
+  } else {
+    alert("Not enough coins for upgrade!");
+  }
+}
+
+// 4. Tap Multiplier Upgrade (Tap Boost) Logic
+function buyTapUpgrade() {
+  const tapUpgradeCost = 1000; 
+  if (balance >= tapUpgradeCost) {
+    balance -= tapUpgradeCost;
+    earnPerTap += 10; 
+    window.earnPerTap = earnPerTap;
+    updateUI();
+    alert("Tap Boost Successful! Earn per tap increased.");
+  } else {
+    alert("Not enough coins for Tap Boost!");
+  }
+}
+
+// 5. Withdraw Alert Function
+function showWithdrawAlert() {
+  alert("Withdrawal feature will be available soon after Season 1 mining ends!");
+}
 
 function claimDailyReward() {
   const lastClaim = localStorage.getItem('lastDailyClaim');
