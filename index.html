@@ -176,10 +176,39 @@
     <!-- TAB 1: Exchange / Tap Screen -->
     <div id="exchange-tab" class="tab-content active">
       <h1 id="balance" style="font-size: 40px; font-weight: bold;">0</h1>
-      <div class="coin-btn" id="tap-btn">🐸 TAP!</div
-<div class="energy-container">
-  ⚡ <span id="energy">1000</span> / 1000
+<div id="tap-btn-container" style="text-align: center; margin: 10px auto; display: flex; justify-content: center; align-items: center; width: 100%;">
+  <img id="tap-btn" onclick="tapCoin(event)" 
+    src="https://i.postimg.cc/dVgKyHV7/1784521286229-2.png" 
+    alt="Dogepepe Coin" 
+    style="width: 270px; height: 270px; object-fit: contain; border-radius: 50%; filter: drop-shadow(0px 0px 18px rgba(255, 215, 0, 0.6)); transition: transform 0.08s ease; cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;"
+    onmousedown="this.style.transform='scale(0.93)'" 
+    onmouseup="this.style.transform='scale(1)'"
+    ontouchstart="this.style.transform='scale(0.93)'" 
+    ontouchend="this.style.transform='scale(1)'">
 </div>
+
+
+
+</div>
+
+<!-- Energy & Upgrade Section -->
+<div style="display: flex; justify-content: space-between; align-items: center; width: 85%; margin: 25px auto 0 auto; padding: 0 10px;">
+  
+  <!-- Left Side: Energy Bar -->
+  <div class="energy-container" style="font-size: 16px; font-weight: bold; color: #f1c40f;">
+    ⚡ <span id="energy">1000</span> / 1000
+  </div>
+
+  <!-- Right Side: Boost / Mine Upgrade Button -->
+  <button id="upgrade-btn" onclick="buyUpgrade()" 
+    style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 8px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3); transition: transform 0.1s ease;"
+    onmousedown="this.style.transform='scale(0.95)'"
+    onmouseup="this.style.transform='scale(1)'">
+    🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">500 🪙</span>
+  </button>
+
+</div>
+
 
     </div>
 
@@ -577,6 +606,40 @@ body {
 
   // Page load hote hi calculate karega
   calculateOfflineMining();
+// --- Profit Per Hour & Upgrade System Logic ---
+let upgradeCost = 500;
+let pphAmount = 200000;
+
+function buyUpgrade() {
+  if (balance >= upgradeCost) {
+    balance -= upgradeCost;
+    pphAmount += 10000;
+    upgradeCost = Math.floor(upgradeCost * 1.5);
+    
+    // UI Updates
+    let balanceElement = document.getElementById("balance");
+    if (balanceElement) balanceElement.innerText = Math.floor(balance).toLocaleString();
+    
+    let pphElement = document.getElementById("profit-per-hour");
+    if (pphElement) pphElement.innerText = "+" + (pphAmount / 100000).toFixed(2) + "lac";
+
+    let upgradeBtn = document.getElementById("upgrade-btn");
+    if (upgradeBtn) {
+      upgradeBtn.innerHTML = `🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${upgradeCost.toLocaleString()} 🪙</span>`;
+    }
+  } else {
+    alert("In-sufficient coins! Pehle tap karke coins jama karein.");
+  }
+}
+
+// Background Passive Income (Har second profit balance me add hoga)
+setInterval(function() {
+  if (pphAmount > 0) {
+    balance += (pphAmount / 3600);
+    let balanceElement = document.getElementById("balance");
+    if (balanceElement) balanceElement.innerText = Math.floor(balance).toLocaleString();
+  }
+}, 1000);
 
 </script>
 
