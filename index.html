@@ -161,11 +161,12 @@
         </button>
     </div>
 
-  <div class="top-stats">
-    <div class="stat-box">Earn per tap<br><span class="stat-val">+10</span></div>
-    <div class="stat-box">Coins to level up<br><span class="stat-val" style="color:#3498db">1M</span></div>
-    <div class="stat-box">Profit per hour<br><span class="stat-val">+2.00lac</span></div>
+ <div class="top-stats">
+  <div class="stat-box">Earn per tap<br><span class="stat-val" id="earn-per-tap">+10</span></div>
+  <div class="stat-box">Coins to level up<br><span class="stat-val" id="coins-to-level" style="color:#3498db">1M</span></div>
+  <div class="stat-box">Profit per hour<br><span class="stat-val" id="profit-per-hour">+2.00lac</span></div>
 </div>
+
 <div style="font-size: 11px; color: #8a9ba8; text-align: center; margin-top: 4px;">Total Supply: 420M</div>
 <div class="est-banner" style="background: rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 6px; text-align: center; color: #f1c40f; font-size: 13px; font-weight: 600;">⚡ Bronze Tier | Season 1 Mining</div>
 
@@ -316,6 +317,24 @@
       if (energyEl) energyEl.innerText = energy;
       const earnTapEl = document.getElementById('earn-per-tap') || document.getElementById('earnPerTap');
 if (earnTapEl) earnTapEl.innerText = "+" + (window.earnPerTap || 10);
+    // Coins to Level Up Dynamic Live Sync
+    const levelEl = document.getElementById('coins-to-level') || document.getElementById('coinsToLevel');
+    if (levelEl) {
+      let remaining = Math.max(0, 1000000 - balance);
+      if (remaining >= 1000000) {
+        levelEl.innerText = (remaining / 1000000).toFixed(2) + "M";
+      } else if (remaining >= 1000) {
+        levelEl.innerText = Math.floor(remaining / 1000) + "K";
+      } else {
+        levelEl.innerText = Math.floor(remaining);
+      }
+    }
+
+    // Profit Per Hour Card Sync
+    const pphEl = document.getElementById('profit-per-hour') || document.getElementById('profitPerHour');
+    if (pphEl) {
+      pphEl.innerText = "+" + ((window.pphAmount || profitPerHour || 200000) / 100000).toFixed(2) + "lac";
+    }
 
 
       localStorage.setItem('doge_balance', balance);
@@ -632,30 +651,104 @@ body {
   // Page load hote hi calculate karega
   calculateOfflineMining();
 // --- Profit Per Hour & Upgrade System Logic ---
+// --- Global Upgrades & UI Sync ---
 let upgradeCost = 500;
 let pphAmount = 200000;
 
+// 1. TAP BOOST UPGRADE FUNCTION
+function buyTapUpgrade() {
+  let currentCoins = parseFloat(localStorage.getItem('user_balance')) || window.balance || 0;
+  
+  if (!window.earnPerTap) {
+    window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
+  }
+  if (!window.tapUpgradeCost) {
+    window.tapUpgradeCost = 1000;
+  }
+
+  if (window.earnPerTap >= 500) {
+    showToast("⭐ Maximum Tap Power (+500) Reached!");
+    return;
+  }
+
+  if (currentCoins >= window.tapUpgradeCost) {
+    currentCoins -= window.tapUpgradeCost;
+    
+    // Increment power by +2 (10 -> 12 -> 14 -> ... max 500)
+    window.earnPerTap = Math.min(500, window.earnPerTap + 2);
+    window.tapUpgradeCost = Math.floor(window.tapUpgradeCost * 1.8);
+
+    window.balance = currentCoins;
+    if (typeof balance !== 'undefined') balance = currentCoins;
+
+    localStorage.setItem('user_balance', currentCoins);
+    localStorage.setItem('doge_tap', window.earnPerTap);
+    
+    // Update Balance UI
+    let bElem = document.getElementById("balance") || document.querySelector(".balance-text, h1");
+    if (bElem) bElem.innerText = Math.floor(currentCoins).toLocaleString();
+
+    // Update Top Left Card (+12, +14...)
+    let eElem = document.getElementById("earn-per-tap") || document.getElementById("earnPerTap");
+    if (eElem) {
+      eElem.innerText = "+" + window.earnPerTap;
+    } else {
+      document.querySelectorAll("div, span, p").forEach(el => {
+        if (el.innerText && el.innerText.trim().startsWith("+") && el.innerText.length <= 6) {
+          el.innerText = "+" + window.earnPerTap;
+        }
+      });
+    }
+
+    // Update Tap Boost Button
+    let btnElem = document.getElementById("tap-upgrade-btn");
+    if (btnElem) {
+      if (window.earnPerTap >= 500) {
+        btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">MAX</span>`;
+      } else {
+        btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${window.tapUpgradeCost.toLocaleString()} 🪙</span>`;
+      }
+    }
+
+    showToast(`🚀 Tap Power Upgraded to +${window.earnPerTap}!`);
+  } else {
+    showToast("⚠️ Insufficient coins! Tap to earn more.");
+  }
+}
+
+// 2. PROFIT PER HOUR UPGRADE FUNCTION
 function buyUpgrade() {
-  if (balance >= upgradeCost) {
-    balance -= upgradeCost;
+  let currentBalance = parseFloat(localStorage.getItem('user_balance')) || window.balance || 0;
+
+  if (currentBalance >= upgradeCost) {
+    currentBalance -= upgradeCost;
     pphAmount += 10000;
     upgradeCost = Math.floor(upgradeCost * 1.5);
-    
-    // UI Updates
-    let balanceElement = document.getElementById("balance");
-    if (balanceElement) balanceElement.innerText = Math.floor(balance).toLocaleString();
-    
-    let pphElement = document.getElementById("profit-per-hour");
+
+    window.balance = currentBalance;
+    if (typeof balance !== 'undefined') balance = currentBalance;
+
+    localStorage.setItem('user_balance', currentBalance);
+    localStorage.setItem('pph_amount', pphAmount);
+
+    let balanceElement = document.getElementById("balance") || document.querySelector(".balance-text, h1");
+    if (balanceElement) balanceElement.innerText = Math.floor(currentBalance).toLocaleString();
+
+    let pphElement = document.getElementById("profit-per-hour") || document.getElementById("profitPerHour");
     if (pphElement) pphElement.innerText = "+" + (pphAmount / 100000).toFixed(2) + "lac";
 
     let upgradeBtn = document.getElementById("upgrade-btn");
     if (upgradeBtn) {
       upgradeBtn.innerHTML = `🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${upgradeCost.toLocaleString()} 🪙</span>`;
     }
+
+    showToast(`📈 Profit Per Hour Increased! New: +${(pphAmount / 100000).toFixed(2)}lac/hr`);
   } else {
-    alert("In-sufficient coins! Pehle tap karke coins jama karein.");
+    showToast("⚠️ Insufficient coins for upgrade!");
   }
 }
+
+
 
 // Background Passive Income (Har second profit balance me add hoga)
 setInterval(function() {
