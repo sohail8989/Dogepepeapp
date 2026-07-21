@@ -613,7 +613,8 @@ body {
       }, 1000);
   });
     // --- Offline / Auto Mining System ---
-  const PROFIT_PER_HOUR = 1000000; // +1.00M per hour
+  const PROFIT_PER_HOUR = 200000; // +0.20M per hour
+
 
   function calculateOfflineMining() {
       const lastSavedTime = localStorage.getItem('last_active_time');
@@ -650,73 +651,43 @@ body {
 
   // Page load hote hi calculate karega
   calculateOfflineMining();
-// --- Global Upgrades & Dynamic Cards Sync ---
-let upgradeCost = 500;
-let pphAmount = 200000; // Base 2 Lac (200,000 PPH)
-
-// 1. TAP BOOST UPGRADE FUNCTION
-function buyTapUpgrade() {
-  // Correct key: doge_balance & fallback to window.balance
-  let currentCoins = parseFloat(localStorage.getItem('doge_balance')) || window.balance || 0;
-  
-  if (!window.earnPerTap) window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
-  if (!window.tapUpgradeCost) window.tapUpgradeCost = 1000;
-
-  if (window.earnPerTap >= 500) {
-    showToast("⭐ Maximum Tap Power (+500) Reached!");
-    return;
-  }
-
-  if (currentCoins >= window.tapUpgradeCost) {
-    currentCoins -= window.tapUpgradeCost;
-    window.earnPerTap = Math.min(500, window.earnPerTap + 2);
-    window.tapUpgradeCost = Math.floor(window.tapUpgradeCost * 1.8);
-
-    window.balance = currentCoins;
-    localStorage.setItem('doge_balance', currentCoins);
-    localStorage.setItem('doge_tap', window.earnPerTap);
-    
-    // UI Update Call
-    if (typeof updateUI === "function") updateUI();
-
-    let btnElem = document.getElementById("tap-upgrade-btn") || document.querySelector("button[onclick*='buyTapUpgrade']");
-    if (btnElem) {
-      btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${window.tapUpgradeCost.toLocaleString()} 🪙</span>`;
-    }
-
-    showToast(`🚀 Tap Power Upgraded to +${window.earnPerTap}!`);
-  } else {
-    showToast("⚠️ Insufficient coins!");
-  }
-}
-
-// 2. PROFIT PER HOUR UPGRADE FUNCTION
+// --- Dynamic Persistent PPH Upgrade System ---
 function buyUpgrade() {
+  // Balance load
   let currentBalance = parseFloat(localStorage.getItem('doge_balance')) || window.balance || 0;
+  
+  // Dynamic variables persistent load (Default: Base PPH = 20,000 i.e 0.20lac, Base Cost = 500)
+  let currentPph = parseFloat(localStorage.getItem('doge_profit')) || window.profitPerHour || 20000;
+  let currentCost = parseFloat(localStorage.getItem('doge_upgrade_cost')) || window.upgradeCost || 500;
 
-  if (currentBalance >= upgradeCost) {
-    currentBalance -= upgradeCost;
+  if (currentBalance >= currentCost) {
+    // Deduct cost
+    currentBalance -= currentCost;
     
-    // Har upgrade par 20,000 coins (+0.20 lac) add honge
-    pphAmount += 20000; 
-    upgradeCost = Math.floor(upgradeCost * 1.5);
+    // Ahista ahista increment (+1,000 PPH = +0.01 lac/hr)
+    currentPph += 1000;
+    
+    // Upgrade cost scaling (1.4x)
+    currentCost = Math.floor(currentCost * 1.4);
 
+    // Save state globally & to localStorage
     window.balance = currentBalance;
-    window.profitPerHour = pphAmount;
-    window.pphAmount = pphAmount;
+    window.profitPerHour = currentPph;
+    window.upgradeCost = currentCost;
 
     localStorage.setItem('doge_balance', currentBalance);
-    localStorage.setItem('doge_profit', pphAmount);
+    localStorage.setItem('doge_profit', currentPph);
+    localStorage.setItem('doge_upgrade_cost', currentCost);
 
-    // UI Update Call
+    // Live UI Refresh
     if (typeof updateUI === "function") updateUI();
 
     let upgradeBtn = document.getElementById("upgrade-btn") || document.querySelector("button[onclick*='buyUpgrade']");
     if (upgradeBtn) {
-      upgradeBtn.innerHTML = `🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${upgradeCost.toLocaleString()} 🪙</span>`;
+      upgradeBtn.innerHTML = `🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${currentCost.toLocaleString()} 🪙</span>`;
     }
 
-    showToast(`📈 Profit Per Hour Increased by +0.20 lac!`);
+    showToast(`📈 Profit Increased! New PPH: +${(currentPph / 100000).toFixed(2)} lac`);
   } else {
     showToast("⚠️ Insufficient coins for upgrade!");
   }
