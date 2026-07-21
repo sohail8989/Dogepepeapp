@@ -458,7 +458,47 @@ localStorage.setItem('doge_profit', 200000);
       });
 
       updateUI();
+      // 1. Offline profit calculate karne ka function
+function applyOfflineEarnings() {
+    let lastTime = localStorage.getItem('dogepepe_last_time');
+    let currentTime = Math.floor(Date.now() / 1000);
+
+    // Agar pehli baar app khul rahi hai ya time saved hai
+    if (lastTime) {
+        let secondsPassed = currentTime - parseInt(lastTime);
+
+        // Agar 1 minute (60 seconds) se zyada app band rahi ho
+        if (secondsPassed > 60) {
+            let hoursPassed = secondsPassed / 3600;
+            
+            // Maximum 3 ghante tak ka offline profit limit
+            let maxHours = 3; 
+            let activeHours = Math.min(hoursPassed, maxHours);
+
+            // Aapke profit per hour ki value (jaise screenshot mein hai)
+            let profitPerHour = 2300000; 
+            let earnedCoins = Math.floor(activeHours * profitPerHour);
+
+            // Agar balance variable memory mein hai ya localStorage mein
+            if (typeof balance !== 'undefined') {
+                balance += earnedCoins; 
+            } else {
+                let savedBalance = parseInt(localStorage.getItem('dogepepe_balance')) || 204211;
+                savedBalance += earnedCoins;
+                localStorage.setItem('dogepepe_balance', savedBalance);
+            }
+        }
+    }
+    // Current time ko save karlo agle check ke liye
+    localStorage.setItem('dogepepe_last_time', currentTime);
+}
+
+// 2. App start hone par yahan run hoga
+applyOfflineEarnings();
+updateUI();
+
     });
+
   </script>
 </body>
 </html>
