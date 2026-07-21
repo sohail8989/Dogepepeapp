@@ -539,6 +539,44 @@ body {
           }
       }, 1000);
   });
+    // --- Offline / Auto Mining System ---
+  const PROFIT_PER_HOUR = 1000000; // +1.00M per hour
+
+  function calculateOfflineMining() {
+      const lastSavedTime = localStorage.getItem('last_active_time');
+      let currentBalance = parseInt(localStorage.getItem('user_balance') || '59822');
+
+      if (lastSavedTime) {
+          const currentTime = Date.now();
+          const timePassedInSeconds = Math.floor((currentTime - parseInt(lastSavedTime)) / 1000);
+
+          if (timePassedInSeconds > 0) {
+              const profitPerSecond = PROFIT_PER_HOUR / 3600;
+              const earnedCoins = Math.floor(timePassedInSeconds * profitPerSecond);
+
+              if (earnedCoins > 0) {
+                  currentBalance += earnedCoins;
+                  localStorage.setItem('user_balance', currentBalance);
+                  alert(`Welcome back! Offline mining se aap ne ${earnedCoins.toLocaleString()} coins earn kiye!`);
+              }
+          }
+      }
+      
+      // Screen par balance element update karne ke liye
+      const balanceElem = document.querySelector('.balance-text, #balance, h1'); 
+      if (balanceElem) {
+          balanceElem.innerText = currentBalance.toLocaleString();
+      }
+  }
+
+  // Har 2 second baad active time local storage mein save hoga
+  setInterval(() => {
+      localStorage.setItem('last_active_time', Date.now().toString());
+  }, 2000);
+
+  // Page load hote hi calculate karega
+  calculateOfflineMining();
+
 </script>
 
 </body>
