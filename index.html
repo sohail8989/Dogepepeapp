@@ -191,20 +191,40 @@
 
 </div>
 
-<!-- Energy & Upgrade Section -->
-<div style="display: flex; justify-content: space-between; align-items: center; width: 85%; margin: 25px auto 0 auto; padding: 0 10px;">
+<!-- Energy, Multitap & Upgrade/Withdraw Section -->
+<div style="width: 88%; margin: 20px auto 0 auto;">
   
-  <!-- Left Side: Energy Bar -->
-  <div class="energy-container" style="font-size: 16px; font-weight: bold; color: #f1c40f;">
-    ⚡ <span id="energy">1000</span> / 1000
+  <!-- Upper Row: Energy Bar + Profit Upgrade Button -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <!-- Energy Display -->
+    <div class="energy-container" style="font-size: 15px; font-weight: bold; color: #f1c40f;">
+      ⚡ <span id="energy">1000</span> / 1000
+    </div>
+
+    <!-- PPH Upgrade Button -->
+    <button id="upgrade-btn" onclick="buyUpgrade()" 
+      style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 8px 14px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);">
+      🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">500 🪙</span>
+    </button>
   </div>
 
-  <!-- Right Side: Boost / Mine Upgrade Button -->
-  <button id="upgrade-btn" onclick="buyUpgrade()" 
-    style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 8px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3); transition: transform 0.1s ease;"
-    onmousedown="this.style.transform='scale(0.95)'"
-    onmouseup="this.style.transform='scale(1)'">
-    🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">500 🪙</span>
+  <!-- Lower Row: Tap Boost + Withdrawal Button -->
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <!-- Tap Multiplier Upgrade Button (Left) -->
+    <button id="tap-upgrade-btn" onclick="buyTapUpgrade()" 
+      style="background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; padding: 8px 14px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3);">
+      ⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">1,000 🪙</span>
+    </button>
+
+    <!-- Withdrawal Button (Right) -->
+    <button onclick="showWithdrawAlert()" 
+      style="background: linear-gradient(135deg, #2980b9, #3498db); color: white; border: none; padding: 8px 14px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);">
+      💰 Withdraw
+    </button>
+  </div>
+
+</div>
+
   </button>
 
 </div>
@@ -280,7 +300,8 @@
 
     // 1. Data Load System
     let balance = parseFloat(localStorage.getItem('doge_balance')) || 0;
-    let earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
+    window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
+
     let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 200000;
     let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
     let maxEnergy = 1000;
@@ -293,6 +314,9 @@
     function updateUI() {
       if (balanceEl) balanceEl.innerText = Math.floor(balance).toLocaleString();
       if (energyEl) energyEl.innerText = energy;
+      const earnTapEl = document.getElementById('earn-per-tap') || document.getElementById('earnPerTap');
+if (earnTapEl) earnTapEl.innerText = "+" + (window.earnPerTap || 10);
+
 
       localStorage.setItem('doge_balance', balance);
       localStorage.setItem('doge_tap', earnPerTap);
@@ -587,7 +611,8 @@ body {
               if (earnedCoins > 0) {
                   currentBalance += earnedCoins;
                   localStorage.setItem('user_balance', currentBalance);
-                  alert(`Welcome back! Offline mining se aap ne ${earnedCoins.toLocaleString()} coins earn kiye!`);
+                  showToast(`🎉 Welcome back! You earned ${earnedCoins.toLocaleString()} coins while offline!`);
+
               }
           }
       }
@@ -640,8 +665,69 @@ setInterval(function() {
     if (balanceElement) balanceElement.innerText = Math.floor(balance).toLocaleString();
   }
 }, 1000);
+// --- Custom Toast Notification System ---
+function showToast(message) {
+  let toast = document.getElementById("custom-toast");
+  if (!toast) return;
+  
+  toast.innerText = message;
+  toast.style.display = "block";
+  toast.style.opacity = "1";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => { toast.style.display = "none"; }, 300);
+  }, 2500);
+}
+
+// 1. Withdrawal Button Action
+function showWithdrawAlert() {
+  showToast("📢 Airdrop Coming Soon! Stay tuned.");
+}
+
+// 2. Dynamic Tap Boost Logic
+function buyTapUpgrade() {
+  if (typeof balance === 'undefined') window.balance = 0;
+
+  if (balance >= window.tapUpgradeCost) {
+    balance -= window.tapUpgradeCost;
+    window.earnPerTap += 5;
+    window.tapUpgradeCost = Math.floor(window.tapUpgradeCost * 1.8);
+
+    // Local Storage Save
+    localStorage.setItem('doge_tap', window.earnPerTap);
+    
+    // Main Balance Update
+    let bElem = document.getElementById("balance");
+    if (bElem) bElem.innerText = Math.floor(balance).toLocaleString();
+
+    // Top Card 1: Earn Per Tap Update
+    let eElem = document.getElementById("earn-per-tap") || document.getElementById("earnPerTap") || document.querySelector(".earn-per-tap");
+    if (eElem) eElem.innerText = "+" + window.earnPerTap;
+
+    // Top Card 2: Level Up Target Update (1M Target)
+    let lvlElem = document.getElementById("coins-to-level") || document.getElementById("levelUp") || document.querySelector(".coins-to-level");
+    if (lvlElem) {
+      let remaining = Math.max(0, 1000000 - balance);
+      lvlElem.innerText = (remaining / 1000000).toFixed(2) + "M";
+    }
+
+    // Tap Boost Button Label Update
+    let btnElem = document.getElementById("tap-upgrade-btn");
+    if (btnElem) {
+      btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${window.tapUpgradeCost.toLocaleString()} 🪙</span>`;
+    }
+
+    showToast(`🚀 Tap Power Upgraded to +${window.earnPerTap}!`);
+  } else {
+    showToast("⚠️ Insufficient coins! Tap to earn more.");
+  }
+}
+
+
 
 </script>
+<div id="custom-toast" style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(20, 20, 30, 0.95); color:#fff; padding:12px 24px; border-radius:25px; border:1px solid #e5a93c; font-weight:600; font-size:14px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:9999; text-align:center; transition:all 0.3s ease;"></div>
 
 </body>
 </html>
