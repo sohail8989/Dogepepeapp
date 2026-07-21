@@ -203,13 +203,13 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div class="energy-container" style="margin: 0;">⚡ <span id="energy">1000</span> / 1000</div>
           <button id="upgrade-btn" onclick="buyUpgrade()" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
-            🚀 Upgrade <span id="upgrade-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 11px;">500,000 🪙</span>
+            🚀 Upgrade <span id="upgrade-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 11px;">5,000 🪙</span>
           </button>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
           <button id="tap-upgrade-btn" onclick="buyTapUpgrade()" style="flex: 1; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
-            ⚡ Tap Boost <span id="tap-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 6px; font-size: 11px;">1000,000 🪙</span>
+            ⚡ Tap Boost <span id="tap-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 6px; font-size: 11px;">1,000 🪙</span>
           </button>
           <button onclick="showToast('Airdrop coming soon!')" style="flex: 1; background: linear-gradient(135deg, #2980b9, #3498db); color: white; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
             💰 Withdraw
@@ -269,7 +269,9 @@
 
     let balance = parseFloat(localStorage.getItem('doge_balance')) || 231959;
     window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
-    let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 2400;
+    let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 200000;
+localStorage.removeItem('doge_profit');
+
     let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
     let maxEnergy = 1000;
 
@@ -351,11 +353,11 @@
     }
 
     function buyUpgrade() {
-      const cost = 5000 * Math.pow(1.8, upgradeLevel);
+      const cost = 500000 * Math.pow(1.8, upgradeLevel);
       if (balance >= cost) {
         balance -= cost;
         upgradeLevel++;
-        profitPerHour += 50000;
+        profitPerHour += 5000;
         updateUI();
         showToast("Upgrade successful! 🚀");
       } else {
@@ -364,7 +366,7 @@
     }
 
     function buyTapUpgrade() {
-      const cost = 1000 * Math.pow(1.5, tapUpgradeLevel);
+      const cost = 100000 * Math.pow(1.5, tapUpgradeLevel);
       if (balance >= cost) {
         balance -= cost;
         tapUpgradeLevel++;
