@@ -650,21 +650,17 @@ body {
 
   // Page load hote hi calculate karega
   calculateOfflineMining();
-// --- Profit Per Hour & Upgrade System Logic ---
-// --- Global Upgrades & UI Sync ---
+// --- Global Upgrades & Dynamic Cards Sync ---
 let upgradeCost = 500;
-let pphAmount = 200000;
+let pphAmount = 200000; // Base 2 Lac (200,000 PPH)
 
 // 1. TAP BOOST UPGRADE FUNCTION
 function buyTapUpgrade() {
-  let currentCoins = parseFloat(localStorage.getItem('user_balance')) || window.balance || 0;
+  // Correct key: doge_balance & fallback to window.balance
+  let currentCoins = parseFloat(localStorage.getItem('doge_balance')) || window.balance || 0;
   
-  if (!window.earnPerTap) {
-    window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
-  }
-  if (!window.tapUpgradeCost) {
-    window.tapUpgradeCost = 1000;
-  }
+  if (!window.earnPerTap) window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
+  if (!window.tapUpgradeCost) window.tapUpgradeCost = 1000;
 
   if (window.earnPerTap >= 500) {
     showToast("⭐ Maximum Tap Power (+500) Reached!");
@@ -673,76 +669,54 @@ function buyTapUpgrade() {
 
   if (currentCoins >= window.tapUpgradeCost) {
     currentCoins -= window.tapUpgradeCost;
-    
-    // Increment power by +2 (10 -> 12 -> 14 -> ... max 500)
     window.earnPerTap = Math.min(500, window.earnPerTap + 2);
     window.tapUpgradeCost = Math.floor(window.tapUpgradeCost * 1.8);
 
     window.balance = currentCoins;
-    if (typeof balance !== 'undefined') balance = currentCoins;
-
-    localStorage.setItem('user_balance', currentCoins);
+    localStorage.setItem('doge_balance', currentCoins);
     localStorage.setItem('doge_tap', window.earnPerTap);
     
-    // Update Balance UI
-    let bElem = document.getElementById("balance") || document.querySelector(".balance-text, h1");
-    if (bElem) bElem.innerText = Math.floor(currentCoins).toLocaleString();
+    // UI Update Call
+    if (typeof updateUI === "function") updateUI();
 
-    // Update Top Left Card (+12, +14...)
-    let eElem = document.getElementById("earn-per-tap") || document.getElementById("earnPerTap");
-    if (eElem) {
-      eElem.innerText = "+" + window.earnPerTap;
-    } else {
-      document.querySelectorAll("div, span, p").forEach(el => {
-        if (el.innerText && el.innerText.trim().startsWith("+") && el.innerText.length <= 6) {
-          el.innerText = "+" + window.earnPerTap;
-        }
-      });
-    }
-
-    // Update Tap Boost Button
-    let btnElem = document.getElementById("tap-upgrade-btn");
+    let btnElem = document.getElementById("tap-upgrade-btn") || document.querySelector("button[onclick*='buyTapUpgrade']");
     if (btnElem) {
-      if (window.earnPerTap >= 500) {
-        btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">MAX</span>`;
-      } else {
-        btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${window.tapUpgradeCost.toLocaleString()} 🪙</span>`;
-      }
+      btnElem.innerHTML = `⚡ Tap Boost <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${window.tapUpgradeCost.toLocaleString()} 🪙</span>`;
     }
 
     showToast(`🚀 Tap Power Upgraded to +${window.earnPerTap}!`);
   } else {
-    showToast("⚠️ Insufficient coins! Tap to earn more.");
+    showToast("⚠️ Insufficient coins!");
   }
 }
 
 // 2. PROFIT PER HOUR UPGRADE FUNCTION
 function buyUpgrade() {
-  let currentBalance = parseFloat(localStorage.getItem('user_balance')) || window.balance || 0;
+  let currentBalance = parseFloat(localStorage.getItem('doge_balance')) || window.balance || 0;
 
   if (currentBalance >= upgradeCost) {
     currentBalance -= upgradeCost;
-    pphAmount += 10000;
+    
+    // Har upgrade par 20,000 coins (+0.20 lac) add honge
+    pphAmount += 20000; 
     upgradeCost = Math.floor(upgradeCost * 1.5);
 
     window.balance = currentBalance;
-    if (typeof balance !== 'undefined') balance = currentBalance;
+    window.profitPerHour = pphAmount;
+    window.pphAmount = pphAmount;
 
-    localStorage.setItem('user_balance', currentBalance);
-    localStorage.setItem('pph_amount', pphAmount);
+    localStorage.setItem('doge_balance', currentBalance);
+    localStorage.setItem('doge_profit', pphAmount);
 
-    let balanceElement = document.getElementById("balance") || document.querySelector(".balance-text, h1");
-    if (balanceElement) balanceElement.innerText = Math.floor(currentBalance).toLocaleString();
+    // UI Update Call
+    if (typeof updateUI === "function") updateUI();
 
-    let pphElement = document.getElementById("profit-per-hour") || document.getElementById("profitPerHour");
-    if (pphElement) pphElement.innerText = "+" + (pphAmount / 100000).toFixed(2) + "lac";
-
-    let upgradeBtn = document.getElementById("upgrade-btn");
+    let upgradeBtn = document.getElementById("upgrade-btn") || document.querySelector("button[onclick*='buyUpgrade']");
     if (upgradeBtn) {
       upgradeBtn.innerHTML = `🚀 Upgrade <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 12px;">${upgradeCost.toLocaleString()} 🪙</span>`;
     }
 
-    showToast(`📈 Profit Per Hour Increased! New: +${(pphAmount / 100000).toFixed(2)}lac/hr`);
+    showToast(`📈 Profit Per Hour Increased by +0.20 lac!`);
   } else {
     showToast("⚠️ Insufficient coins for upgrade!");
   }
