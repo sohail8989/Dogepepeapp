@@ -270,7 +270,8 @@
     let balance = parseFloat(localStorage.getItem('doge_balance')) || 231959;
     window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
     let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 200000;
-localStorage.removeItem('doge_profit');
+localStorage.setItem('doge_profit', 200000);
+
 
     let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
     let maxEnergy = 1000;
