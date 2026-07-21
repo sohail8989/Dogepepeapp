@@ -613,7 +613,10 @@ body {
       }, 1000);
   });
     // --- Offline / Auto Mining System ---
-  const PROFIT_PER_HOUR = 200000; // +0.20M per hour
+  // Dynamic Profit Per Hour (Loads from localStorage or defaults to 2 Lac)
+let pphAmount = parseFloat(localStorage.getItem('doge_profit')) || 200000;
+
+
 
 
   function calculateOfflineMining() {
@@ -625,7 +628,8 @@ body {
           const timePassedInSeconds = Math.floor((currentTime - parseInt(lastSavedTime)) / 1000);
 
           if (timePassedInSeconds > 0) {
-              const profitPerSecond = PROFIT_PER_HOUR / 3600;
+              const profitPerSecond =    pphAmount / 3600;
+
               const earnedCoins = Math.floor(timePassedInSeconds * profitPerSecond);
 
               if (earnedCoins > 0) {
