@@ -204,16 +204,28 @@
 
       <div style="width: 90%; max-width: 360px; margin: 15px auto 0 auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <div class="energy-container" style="margin: 0;">⚡ <span id="energy">1000</span> / 1000</div>
+          <span id="energy">1000</span> / <span id="max-energy">1000</span>
+
           <button id="upgrade-btn" onclick="buyUpgrade()" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
             🚀 Upgrade <span id="upgrade-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 6px; font-size: 11px;">5,000 🪙</span>
           </button>
         </div>
+        <!-- Naya Tap Boost Button (Upar wala) -->
+<div style="margin-bottom: 10px; width: 100%;">
+    <button onclick="upgradeTapBoost()" id="tap-boost-btn" style="width: 100%; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+        <span>⚡ Tap Boost</span>
+        <span id="boost-cost-text" style="background: rgba(0,0,0,0.25); padding: 3px 8px; border-radius: 6px; font-size: 12px;">1000 🪙</span>
+    </button>
+</div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-          <button id="tap-upgrade-btn" onclick="buyTapUpgrade()" style="flex: 1; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
-            ⚡ Tap Boost <span id="tap-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 6px; font-size: 11px;">1,000 🪙</span>
-          </button>
+<!-- Purana Tap/Per-Tap Upgrade Button (Neeche wala) -->
+<div style="width: 100%;">
+    <button id="tap-upgrade-btn" onclick="buyTapUpgrade()" style="width: 100%; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+        <span>🚀 Tap Upgrade</span>
+        <span id="tap-cost-lbl" style="background: rgba(0,0,0,0.25); padding: 3px 8px; border-radius: 6px; font-size: 12px;">1,000 🪙</span>
+    </button>
+</div>
+
           <button onclick="openWalletModal()" style="flex: 1; background: linear-gradient(135deg, #f3ba2f, #d49a00); color: black; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
     💰 Withdraw
 </button>
@@ -422,7 +434,27 @@ localStorage.setItem('doge_profit', 200000);
 
 
     let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
-    let maxEnergy = 1000;
+let maxEnergy = parseInt(localStorage.getItem('doge_max_energy')) || 1000;
+let boostCost = parseInt(localStorage.getItem('doge_boost_cost')) || 1000;
+
+function upgradeTapBoost() {
+    if (balance >= boostCost) {
+        balance -= boostCost;
+        maxEnergy += 1000;
+        energy = maxEnergy;
+        boostCost *= 2;
+
+        localStorage.setItem('doge_balance', balance);
+        localStorage.setItem('doge_max_energy', maxEnergy);
+        localStorage.setItem('doge_energy', energy);
+        localStorage.setItem('doge_boost_cost', boostCost);
+
+        updateUI(); 
+    } else {
+        showToast("Aapke paas kafi coins nahi hain!");
+    }
+
+}
 
     let upgradeLevel = parseInt(localStorage.getItem('doge_up_lvl')) || 0;
     let tapUpgradeLevel = parseInt(localStorage.getItem('doge_tap_lvl')) || 0;
