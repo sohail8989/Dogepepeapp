@@ -411,8 +411,6 @@
     let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 200000;
 localStorage.setItem('doge_profit', 200000);
 
-document.getElementById('max-energy').innerText = maxEnergy;
-
     let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
 let maxEnergy = parseInt(localStorage.getItem('doge_max_energy')) || 1000;
 let boostCost = parseInt(localStorage.getItem('doge_boost_cost')) || 1000;
