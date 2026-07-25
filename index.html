@@ -410,23 +410,6 @@
     window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
     let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 200000;
 localStorage.setItem('doge_profit', 200000);
-// --- OFFLINE ENERGY RECOVERY & SAVING LOGIC ---
-const lastActiveTime = localStorage.getItem('doge_last_active');
-if (lastActiveTime) {
-    const elapsedSeconds = Math.floor((Date.now() - parseInt(lastActiveTime)) / 1000);
-    
-    // Offline time ke hisab se energy recovery (maslan 5 energy per second ya apni marzi ka rate)
-    let recoveredEnergy = elapsedSeconds * 5; 
-    energy = Math.min(maxEnergy, energy + recoveredEnergy);
-    
-    // Offline profit calculation
-    let profitPerSec = (parseInt(localStorage.getItem('doge_profit')) || 200000) / 3600;
-    let offlineEarnings = Math.floor(profitPerSec * elapsedSeconds);
-    if (offlineEarnings > 0) {
-        balance += offlineEarnings;
-        localStorage.setItem('doge_balance', balance);
-    }
-}
 
 // Har second current state save karne ke liye
 setInterval(() => {
