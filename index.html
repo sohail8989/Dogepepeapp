@@ -242,37 +242,15 @@
       <button onclick="shareInviteLink()" style="padding: 14px 28px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">Invite a Friend 🚀</button>
     </div>
 
-    <!-- AIRDROP TAB -->
-    <div id="airdrop-tab" class="tab-content" style="padding: 0 20px; overflow-y: auto;">
-      <h2>Airdrop Tasks</h2>
-      <p style="margin-top: 10px; color: #aaa;">Complete tasks to qualify for the airdrop.</p>
-      
-      <div class="daily-container">
-        <div class="daily-title">📅 Daily Reward</div>
-        <p id="daily-status" style="font-size: 12px; color: #ccc; margin-bottom: 10px;">Claim your daily bonus!</p>
-        <button id="daily-claim-btn" class="claim-btn" onclick="claimDailyReward()">Claim Reward (+100,000)</button>
-      </div>
-
-      <div style="margin-top: 20px; text-align: left; width: 100%;">
-        <div style="background: rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <strong style="font-size: 14px;">📢 Join Telegram Channel</strong>
-                <p style="margin: 3px 0 0 0; color: #4caf50; font-size: 12px;">+50,000 Coins</p>
-            </div>
-            <button id="tg-task-btn" style="background: #28a745; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="completeTask('tg', 'https://t.me/Dogepepeofficialcoincommunity', 50000)">Join</button>
+         <!-- AIRDROP TAB -->
+        <div id="airdrop-tab" class="tab-content" style="padding: 0 20px; overflow-y: auto;">
+            <h2>Airdrop Tasks</h2>
+            <p style="margin-top: 10px; color: #aaa; font-size: 14px;">Complete tasks to qualify for the airdrop.</p>
+            
+            <!-- Dynamic Tasks Container -->
+            <div id="taskList" style="margin-top: 15px;"></div>
         </div>
 
-        <div style="background: rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <strong style="font-size: 14px;">▶️ Subscribe YouTube</strong>
-                <p style="margin: 3px 0 0 0; color: #4caf50; font-size: 12px;">+1,000,000 Coins</p>
-            </div>
-            <button id="yt-task-btn" style="background: #28a745; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="completeTask('yt', 'https://www.youtube.com/@dogepepeofficial-l2p', 1000000)">Subscribe</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
 
   <div class="nav-bar">
     <div class="nav-item active" onclick="switchTab('exchange-tab', this)">💧<br>Exchange</div>
@@ -753,6 +731,131 @@ function switchTab(tabId, element) {
         element.classList.add('active');
     }
 }
+    const tasks = [
+        {
+            id: 'daily_reward',
+            title: '📅 Daily Reward',
+            reward: 100000,
+            rewardText: '+100,000 Coins',
+            isDaily: true,
+            link: '#'
+        },
+        {
+            id: 'youtube_task',
+            title: '📺 Subscribe YouTube',
+            reward: 1000000,
+            rewardText: '+1,000,000 Coins',
+            link: 'https://www.youtube.com/@dogepepeofficial-l2p'
+        },
+        {
+            id: 'elon_task',
+            title: '🚀 Follow Elon Musk on X',
+            reward: 2500000,
+            rewardText: '+2,500,000 Coins',
+            link: 'https://x.com/elonmusk'
+        },
+        {
+            id: 'x_task',
+            title: '🐦 Follow X (Twitter)',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://x.com/dogepepe2026'
+        },
+        {
+            id: 'insta_task',
+            title: '📸 Follow Instagram',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://www.instagram.com/dogepepecoin?igsh=MWh0M3Jma2RtcmR2ag=='
+        },
+        {
+            id: 'fb_task',
+            title: '👥 Join Facebook Video',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://www.facebook.com/share/v/1HByc3WqBa/'
+        },
+        {
+            id: 'tiktok_task',
+            title: '🎵 Follow TikTok',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://tiktok.com/@dogepepeofficialcoin'
+        }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('taskList');
+        if (!container) return;
+        container.innerHTML = '';
+
+        tasks.forEach(task => {
+            const card = document.createElement('div');
+            card.style.cssText = "background: rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;";
+
+            let btnText = task.isDaily ? 'Claim Reward' : 'Start';
+            let btnBg = '#28a745';
+            let isDisabled = false;
+            let clickAction = `handleTaskClick('${task.id}', '${task.link}', ${task.isDaily}, ${task.reward})`;
+
+            const status = localStorage.getItem(`task_${task.id}`);
+            const claimTime = localStorage.getItem(`time_${task.id}`);
+
+            if (task.isDaily && claimTime) {
+                const currentTime = new Date().getTime();
+                const timeDiff = currentTime - parseInt(claimTime);
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+
+                if (timeDiff < twentyFourHours) {
+                    isDisabled = true;
+                    btnBg = '#6c757d';
+                    const timeLeft = twentyFourHours - timeDiff;
+                    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                    const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                    btnText = `Claim in ${hours}h ${minutes}m`;
+                } else {
+                    localStorage.removeItem(`task_${task.id}`);
+                    localStorage.removeItem(`time_${task.id}`);
+                }
+            } else if (!task.isDaily && status === 'completed') {
+                isDisabled = true;
+                btnBg = '#6c757d';
+                btnText = 'Already Claimed';
+                clickAction = '';
+            }
+
+            card.innerHTML = `
+                <div>
+                    <strong style="font-size: 14px;">${task.title}</strong>
+                    <p style="margin: 3px 0 0 0; color: #4caf50; font-size: 12px;">${task.rewardText}</p>
+                </div>
+                <button style="background: ${btnBg}; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};" ${isDisabled ? 'disabled' : ''} onclick="${clickAction}">
+                    ${btnText}
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function handleTaskClick(id, link, isDaily, reward) {
+        if (link && link !== '#') {
+            window.open(link, '_blank');
+        }
+
+        if (isDaily) {
+            const currentTime = new Date().getTime();
+            localStorage.setItem(`time_${id}`, currentTime);
+            alert(`Success! You claimed ${reward.toLocaleString()} coins.`);
+        } else {
+            localStorage.setItem(`task_${id}`, 'completed');
+            alert(`Task completed! Added ${reward.toLocaleString()} coins.`);
+        }
+
+        renderTasks();
+    }
+
+    window.addEventListener('load', renderTasks);
+    setInterval(renderTasks, 60000);
 
 </script>
 
