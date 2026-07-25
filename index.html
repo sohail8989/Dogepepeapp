@@ -449,6 +449,7 @@ function upgradeTapBoost() {
         localStorage.setItem('doge_max_energy', maxEnergy);
         localStorage.setItem('doge_boost_cost', boostCost);
         localStorage.setItem('doge_energy', energy);
+document.getElementById('max-energy').innerText = maxEnergy;
 
         updateUI(); 
     } else {
