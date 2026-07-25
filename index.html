@@ -211,9 +211,10 @@
           <button id="tap-upgrade-btn" onclick="buyTapUpgrade()" style="flex: 1; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
             ⚡ Tap Boost <span id="tap-cost-lbl" style="background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 6px; font-size: 11px;">1,000 🪙</span>
           </button>
-          <button onclick="showToast('Airdrop coming soon!')" style="flex: 1; background: linear-gradient(135deg, #2980b9, #3498db); color: white; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
-            💰 Withdraw
-          </button>
+          <button onclick="openWalletModal()" style="flex: 1; background: linear-gradient(135deg, #f3ba2f, #d49a00); color: black; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
+    💰 Withdraw
+</button>
+
         </div>
       </div>
     </div>
@@ -501,4 +502,54 @@ updateUI();
 
   </script>
 </body>
+<!-- Wallet Selection Modal -->
+<div id="walletModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:flex-end;">
+    <div style="background:#1a1a1a; width:100%; max-width:500px; padding:20px; border-top-left-radius:20px; border-top-right-radius:20px; color:#fff;">
+        <span onclick="closeWalletModal()" style="float:right; font-size:24px; cursor:pointer; color:#aaa;">&times;</span>
+        <h3 style="margin-bottom: 15px;">Receiving wallet</h3>
+        
+        <label style="font-size: 13px; color: #888;">Receiving method</label>
+        <select id="walletMethod" style="width:100%; padding:12px; margin:8px 0 15px 0; background:#262626; border:1px solid #333; color:#fff; border-radius:8px;">
+            <option value="" disabled selected>Select a receiving method</option>
+            <option value="Bitget">Bitget</option>
+            <option value="Kraken">Kraken</option>
+            <option value="Bitcoin">Bitcoin</option>
+            <option value="USDT">USDT</option>
+            <option value="TON">TON</option>
+        </select>
+
+        <label style="font-size: 13px; color: #888;">Wallet Address</label>
+        <input type="text" id="walletAddressInput" placeholder="Enter your Receiving wallet account or address" style="width:100%; padding:12px; margin:8px 0 20px 0; background:#262626; border:1px solid #333; color:#fff; border-radius:8px; box-sizing: border-box;">
+        
+        <button onclick="saveWallet()" style="width:100%; padding:14px; background:linear-gradient(135deg, #f3ba2f, #d49a00); color:#000; font-weight:bold; border:none; border-radius:10px; cursor:pointer; font-size:16px;">Save</button>
+    </div>
+</div>
+
+<script>
+function openWalletModal() {
+    document.getElementById('walletModal').style.display = 'flex';
+}
+
+function closeWalletModal() {
+    document.getElementById('walletModal').style.display = 'none';
+}
+
+function saveWallet() {
+    const method = document.getElementById('walletMethod').value;
+    const address = document.getElementById('walletAddressInput').value.trim();
+
+    if (!method) {
+        alert("Please select a receiving method!");
+        return;
+    }
+    if (!address) {
+        alert("Please enter your wallet address!");
+        return;
+    }
+
+    alert("Wallet saved successfully for " + method + "!");
+    closeWalletModal();
+}
+</script>
+
 </html>
