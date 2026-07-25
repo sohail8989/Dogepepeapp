@@ -262,6 +262,133 @@
     <div class="nav-item active" onclick="switchTab('exchange-tab', this)">💧<br>Exchange</div>
     <div class="nav-item" onclick="switchTab('friends-tab', this)">👥<br>Friends</div>
     <div class="nav-item" onclick="switchTab('airdrop-tab', this)">🏛️<br>Airdrop</div>
+        <div class="nav-item" onclick="switchTab('tasks-tab', this)">📋<br>Tasks</div>
+<!-- TASKS TAB / PAGE -->
+<div id="tasks-tab" class="tab-content" style="display: none; padding: 15px; color: #fff; padding-bottom: 80px;">
+    <h2 style="font-size: 22px; margin-bottom: 5px; font-weight: bold;">Task Center</h2>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Complete tasks below to earn 50,000 Dogepepe coins each!</p>
+
+    <!-- Task 1: Binance News -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #f3ba2f22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #f3ba2f; font-weight: bold;">B</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Binance News</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.binance.com/en/square/news', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 2: OKX Exchange -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #262626; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; font-weight: bold;">O</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">OKX Official</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.okx.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 3: TON Ecosystem -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #0088cc22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #0088cc;">💎</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Explore TON Network</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://ton.org', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 4: CoinMarketCap -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #1652f022; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #1652f0;">📊</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">CoinMarketCap Tracking</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://coinmarketcap.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 5: CoinGecko -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #8dc63f22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #8dc63f;">🦎</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">CoinGecko Markets</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.coingecko.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 6: Telegram Official -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #229ed922; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #229ed9;">✈️</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Join Telegram Channel</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://telegram.org', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 7: Bybit Exchange -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #f7a60022; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #f7a600;">⚡</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Bybit Crypto Trading</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.bybit.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 8: Twitter / X Official -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #ffffff22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff;">🐦</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Follow on X (Twitter)</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://twitter.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 9: YouTube Community -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #ff000022; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #ff0000;">▶️</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Subscribe YouTube Channel</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.youtube.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 10: Solana Ecosystem -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #14f19522; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #14f195;">🟣</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Solana Trending</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://solana.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+</div>
+
   </div>
 
   <script>
