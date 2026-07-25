@@ -226,9 +226,10 @@
     </button>
 </div>
 
-          <button onclick="openWalletModal()" style="flex: 1; background: linear-gradient(135deg, #f3ba2f, #d49a00); color: black; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">
+        <button onclick="openWalletModal()" style="flex: 1; background: linear-gradient(135deg, #f3ba2f, #d49a00); color: black; border: none; padding: 10px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px; margin-top: 17px;">
     💰 Withdraw
 </button>
+
 
         </div>
       </div>
@@ -446,12 +447,12 @@ function upgradeTapBoost() {
 
         localStorage.setItem('doge_balance', balance);
         localStorage.setItem('doge_max_energy', maxEnergy);
-        localStorage.setItem('doge_energy', energy);
         localStorage.setItem('doge_boost_cost', boostCost);
+        localStorage.setItem('doge_energy', energy);
 
         updateUI(); 
     } else {
-        showToast("Aapke paas kafi coins nahi hain!");
+        showToast("LOW BALANCE!");
     }
 
 }
