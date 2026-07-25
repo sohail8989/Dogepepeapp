@@ -191,6 +191,9 @@
     
     <!-- EXCHANGE TAB -->
     <div id="exchange-tab" class="tab-content active">
+
+
+
       <h1 id="balance" style="font-size: 40px; font-weight: bold; margin: 10px 0;">231,959</h1>
       <div id="tap-btn-container" style="text-align: center; margin: 5px auto; display: flex; justify-content: center; align-items: center; width: 100%; position: relative;">
         <img id="tap-btn" 
@@ -263,10 +266,11 @@
     <div class="nav-item" onclick="switchTab('friends-tab', this)">👥<br>Friends</div>
     <div class="nav-item" onclick="switchTab('airdrop-tab', this)">🏛️<br>Airdrop</div>
         <div class="nav-item" onclick="switchTab('tasks-tab', this)">📋<br>Tasks</div>
-<!-- TASKS TAB / PAGE -->
+</div>
 <div id="tasks-tab" class="tab-content" style="display: none; padding: 15px; color: #fff; padding-bottom: 80px;">
     <h2 style="font-size: 22px; margin-bottom: 5px; font-weight: bold;">Task Center</h2>
     <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Complete tasks below to earn 50,000 Dogepepe coins each!</p>
+
 
     <!-- Task 1: Binance News -->
     <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
@@ -392,6 +396,22 @@
   </div>
 
   <script>
+    function switchTab(tabId, element) {
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.style.display = 'none');
+    
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.style.display = 'block';
+    }
+    
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    }
+}
+
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) tg.expand();
 
@@ -677,6 +697,29 @@ function saveWallet() {
     alert("Wallet saved successfully for " + method + "!");
     closeWalletModal();
 }
+function switchTab(tabId, element) {
+    // Sabhi tab contents ko hide karein
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.style.display = 'none';
+        tab.classList.remove('active');
+    });
+
+    // Jis tab par click hua hai usay show karein
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.style.display = 'block';
+        activeTab.classList.add('active');
+    }
+
+    // Nav bar items ki active class manage karein
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    }
+}
+
 </script>
 
 </html>
