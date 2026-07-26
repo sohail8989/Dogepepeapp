@@ -883,6 +883,29 @@ function switchTab(tabId, element) {
         
         renderTasks();
     }
+// Offline profit calculation on app load
+window.addEventListener('load', function() {
+    const currentTime = new Date().getTime();
+    const lastTime = localStorage.getItem('doge_last_time');
+    
+    if (lastTime) {
+        const elapsedSeconds = Math.floor((currentTime - parseInt(lastTime)) / 1000);
+        
+        if (elapsedSeconds > 10) {
+            // Yahan apne variable ka naam check kar lein jo Profit per hour ko store karta hai (misal ke tor par profitPerHour)
+            const earnedCoins = (profitPerHour / 3600) * elapsedSeconds;
+            
+            balance += earnedCoins;
+            localStorage.setItem('doge_balance', balance);
+        }
+    }
+    localStorage.setItem('doge_last_time', currentTime);
+});
+
+// Har waqt time update karne ke liye
+setInterval(function() {
+    localStorage.setItem('doge_last_time', new Date().getTime());
+}, 10000);
 
     window.addEventListener('load', renderTasks);
     setInterval(renderTasks, 60000);
