@@ -416,13 +416,15 @@ localStorage.setItem('doge_profit', 200000);
 setInterval(() => {
     localStorage.setItem('doge_last_active', Date.now());
     localStorage.setItem('doge_energy', energy);
+    localStorage.setItem('doge_max_energy', maxEnergy);
 }, 1000);
-
 // App close hone par data save rakhne ke liye
 window.addEventListener('beforeunload', () => {
     localStorage.setItem('doge_last_active', Date.now());
     localStorage.setItem('doge_energy', energy);
     localStorage.setItem('doge_balance', balance);
+    localStorage.setItem('doge_max_energy', maxEnergy);
+
 });
 
     let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
