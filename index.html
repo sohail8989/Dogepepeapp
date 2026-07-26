@@ -431,6 +431,20 @@ window.addEventListener('beforeunload', () => {
 
 let maxEnergy = parseInt(localStorage.getItem('doge_max_energy')) || 1000;
 let boostCost = parseInt(localStorage.getItem('doge_boost_cost')) || 1000;
+// Last active time load karein
+let lastActive = parseInt(localStorage.getItem('doge_last_active')) || Date.now();
+let currentTime = Date.now();
+
+// Seconds count karein kitni der app band rahi
+let elapsedSeconds = Math.floor((currentTime - lastActive) / 1000);
+
+// Energy recovery rate (jaise 1 energy per second ya jo aapka rate ho)
+let rechargeRate = 1; 
+let recoveredEnergy = elapsedSeconds * rechargeRate;
+
+// Total energy update karein (maxEnergy se zyada na ho)
+energy = Math.min(maxEnergy, energy + recoveredEnergy);
+
 
 function upgradeTapBoost() {
     if (balance >= boostCost) {
@@ -858,15 +872,15 @@ function switchTab(tabId, element) {
             window.open(link, '_blank');
         }
 
-        if (isDaily) {
+                if (isDaily) {
             const currentTime = new Date().getTime();
             localStorage.setItem(`time_${id}`, currentTime);
-            alert(`Success! You claimed ${reward.toLocaleString()} coins.`);
+          
         } else {
             localStorage.setItem(`task_${id}`, 'completed');
-            alert(`Task completed! Added ${reward.toLocaleString()} coins.`);
+          
         }
-
+        
         renderTasks();
     }
 
