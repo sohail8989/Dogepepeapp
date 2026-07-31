@@ -303,6 +303,25 @@ button, .claim-btn, .solana-btn, .daily-container {
         <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">Withdraw</span>
         <span style="background: rgba(255,255,255,0.85); color: black; padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">Payout 💸</span>
     </button>
+<!-- EARN TON Button -->
+<button class="earn-btn" onclick="openEarnPage('TON', 1.5, 'TON.png')"
+    style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+    <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <img src="TON.png" alt="EARN TON" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%;">
+    </div>
+    <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">EARN TON</span>
+    <span id="home-ton-timer" style="background: rgba(255,255,255,0.85); color: black; padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">Claim 1.5 TON 💰</span>
+</button>
+
+<!-- EARN BNB Button -->
+<button class="earn-btn" onclick="openEarnPage('BNB', 0.09, 'BNB .png')"
+    style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+    <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <img src="BNB .png" alt="EARN BNB" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%;">
+    </div>
+    <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">EARN BNB</span>
+    <span id="home-bnb-timer" style="background: rgba(255,255,255,0.85); color: black; padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">Claim 0.09 BNB 💎</span>
+</button>
 
 </div>
 
@@ -763,8 +782,174 @@ applyOfflineEarnings();
 updateUI();
 
     });
+let currentType = '';
+let currentRewardAmount = 0;
+
+function openEarnPage(type, amount, imgSrc) {
+    currentType = type;
+    currentRewardAmount = amount;
+    
+    document.getElementById('page-header-title').innerText = `Earn ${type}`;
+    document.getElementById('page-reward-title').innerText = `${amount} ${type} Daily Claim`;
+    document.getElementById('page-img').src = imgSrc;
+    
+    document.getElementById('earn-page').style.display = 'flex';
+    updatePageState();
+}
+
+function closeEarnPage() {
+    document.getElementById('earn-page').style.display = 'none';
+}
+
+function getStorageKey(type) {
+    return `dogepepe_last_claim_${type}`;
+}
+
+function updatePageState() {
+    const lastClaim = localStorage.getItem(getStorageKey(currentType));
+    const now = new Date().getTime();
+    const cooldown = 24 * 60 * 60 * 1000; // 24 Hours
+
+    const btn = document.getElementById('main-claim-btn');
+    const display = document.getElementById('countdown-display');
+
+    if (lastClaim) {
+        const elapsed = now - parseInt(lastClaim);
+        if (elapsed < cooldown) {
+            const timeLeft = cooldown - elapsed;
+            startActiveCountdown(timeLeft);
+            btn.innerText = "Claimed (24h Cooldown)";
+            btn.disabled = true;
+            btn.style.background = "#374151";
+            btn.style.color = "#9ca3af";
+            return;
+        }
+    }
+
+    btn.innerText = "Daily Collect 🚀";
+    btn.disabled = false;
+    btn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
+    btn.style.color = "white";
+    display.innerText = "Ready to Claim!";
+}
+
+function performClaim() {
+    const now = new Date().getTime();
+    localStorage.setItem(getStorageKey(currentType), now);
+    
+    alert(`Successfully collected ${currentRewardAmount} ${currentType}! 🎉 24-hour timer started.`);
+    updatePageState();
+    updateHomeTimers();
+}
+
+function startActiveCountdown(duration) {
+    let timeLeft = duration;
+    const display = document.getElementById('countdown-display');
+
+    const timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            updatePageState();
+            updateHomeTimers();
+            return;
+        }
+
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        display.innerText = `${hours}h ${minutes}m ${seconds}s remaining`;
+        timeLeft -= 1000;
+    }, 1000);
+}
+
+function updateHomeTimers() {
+    ['TON', 'BNB'].forEach(type => {
+        const lastClaim = localStorage.getItem(getStorageKey(type));
+        const homeTimerEl = document.getElementById(`home-${type.toLowerCase()}-timer`);
+        if (lastClaim) {
+            const elapsed = new Date().getTime() - parseInt(lastClaim);
+            const cooldown = 24 * 60 * 60 * 1000;
+            if (elapsed < cooldown) {
+                const timeLeft = cooldown - elapsed;
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                homeTimerEl.innerText = `${hours}h ${minutes}m left`;
+            } else {
+                homeTimerEl.innerText = `Claim ${type === 'TON' ? '1.5 TON' : '0.09 BNB'}`;
+            }
+        }
+    });
+}
+
+function openWithdrawModal() {
+    if (typeof openWalletModal === 'function') {
+        openWalletModal();
+    } else {
+        alert("Opening Professional Withdrawal Payout Window...");
+    }
+}
+
+// Ensure home timers update on load agar window.onload pehlay se hai toh yeh function usme call karlein
+if (typeof window.onload === 'function') {
+    let oldLoad = window.onload;
+    window.onload = function() {
+        oldLoad();
+        updateHomeTimers();
+    };
+} else {
+    window.onload = function() {
+        updateHomeTimers();
+    };
+}
 
   </script>
+  <!-- Earn Detail View Page -->
+<div id="earn-page" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121418; z-index: 1000; flex-direction: column; padding: 20px; box-sizing: border-box; overflow-y: auto; color: white;">
+    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <button onclick="closeEarnPage()" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">← Back</button>
+        <div id="page-header-title" style="margin-left: 15px; font-size: 18px; font-weight: bold;">Earn Crypto</div>
+    </div>
+    
+    <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+        <img id="page-img" src="" alt="Crypto" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; object-position: center 20%; margin-bottom: 15px; border: 2px solid gold;">
+        <h2 id="page-reward-title" style="margin: 10px 0;">Claim Reward</h2>
+        <p style="color: #9ca3af; font-size: 14px;">Complete your daily claim and start the 24-hour countdown timer.</p>
+        <div id="countdown-display" style="font-size: 22px; font-weight: bold; color: gold; margin: 15px 0;">Ready to Claim!</div>
+        
+        <button id="main-claim-btn" onclick="performClaim()" style="width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; background: linear-gradient(135deg, #22c55e, #16a34a); color: white;">Daily Collect 🚀</button>
+    </div>
+
+    <!-- Professional Withdrawal Section with Policy -->
+    <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: left;">
+        <h3 style="margin-top: 0; font-size: 16px;">Professional Withdrawal</h3>
+        <p style="color: #9ca3af; font-size: 13px; line-height: 1.4;">Withdrawals are processed instantly according to platform policy. Ensure your wallet is connected before requesting payout.</p>
+<button onclick="showAirdropPopup()" style="width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;">
+    Payout 💵
+</button>
+
+    </div>
+</div>
+<!-- Custom Popup Box -->
+<div id="airdropModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+    <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="font-size: 40px; margin-bottom: 10px;">🚀</div>
+        <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px;">Notice</h3>
+        <p style="color: #9ca3af; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">Withdrawal is currently locked! Please wait for the official Airdrop distribution.</p>
+        <button onclick="closeAirdropPopup()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer;">OK</button>
+    </div>
+</div>
+
+<script>
+function showAirdropPopup() {
+    document.getElementById('airdropModal').style.display = 'flex';
+}
+
+function closeAirdropPopup() {
+    document.getElementById('airdropModal').style.display = 'none';
+}
+</script>
+
 </body>
 <!-- Wallet Selection Modal -->
 <div id="walletModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:flex-end;">
