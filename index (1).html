@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dogepepe Mini App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+
+    html, body {
+        height: 100vh;
+        width: 100vw;
+      background-color: #0d131d !important;
+        color: #fff !important;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
+.daily-container {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.daily-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff !important;
+    margin-bottom: 10px;
+}
+
+
+    /* Saare buttons aur main blocks ke liye exact metallic dark & gold styling */
+button, .claim-btn, .solana-btn, .daily-container {
+    background: linear-gradient(135deg, #d4af37 0%, #aa771c 50%, #654321 100%) !important;
+    color: #ffffff !important;
+    border: 1.5px solid #f1c40f !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: 0.3s;
+}
+
+    /* Specific buttons styling to match target image */
+    .claim-btn, .solana-btn {
+        padding: 12px 20px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    .claim-btn:disabled {
+        background: #111 !important;
+        color: #555 !important;
+        border: 1.5px solid #333 !important;
+        cursor: not-allowed !important;
+        box-shadow: none !important;
+    }
+
+    .header-container { width: 100% !important; }
+
+    .wallet-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px;
+        align-items: center;
+        width: 100% !important;
+    }
+
+    #ton-connect {
+        width: 100% !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    #ton-connect > div {
+        width: 100% !important;
+        max-width: 320px !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    .top-stats { display: flex; justify-content: space-around; padding: 10px; background: #151d2a; }
+    .stat-box { background: #1c2738; padding: 8px 12px; border-radius: 8px; flex: 1; margin: 0 4px; font-size: 11px; text-align: center; }
+    .stat-val { color: #28a745; font-weight: bold; font-size: 13px; }
+.est-banner { 
+    background: linear-gradient(90deg, #ff8c00, #ff5500); 
+    padding: 8px; 
+    margin: 8px 10px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    font-size: 12px; 
+    text-align: center; 
+}
+
+
+    .main-wrapper {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding-bottom: 100px;
+    }
+
+    .tab-content {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .nav-bar { width: 100%; display: flex; justify-content: space-around; background: #151d2a; padding: 12px 0; border-top: 1px solid #233146; position: fixed; bottom: 0; left: 0; z-index: 999; }
+    .nav-item { color: #8a9ba8; text-decoration: none; font-size: 11px; flex: 1; text-align: center; cursor: pointer; }
+    .nav-item.active { color: #3498db; }
+    
+    .tap-animation {
+      position: absolute;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 26px;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 9999;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-60px); }
+    }
+
+    #custom-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #1c2738;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid #3498db;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 10000;
+      transition: transform 0.3s ease;
+      text-align: center;
+      max-width: 90%;
+    }
+    #custom-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    /* ================= CREATOR REWARD STYLES ================= */
+    .cr-header-container { display: flex; justify-content: center; margin: 12px 0 5px 0; width: 100%; }
+    .cr-3d-btn {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      border: none; border-radius: 14px; padding: 12px 24px; color: #000;
+      font-weight: 800; font-size: 15px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 5px 0 #b37400, 0 8px 15px rgba(0,0,0,0.5);
+      transition: all 0.1s ease; text-transform: uppercase; width: 90%; max-width: 320px;
+    }
+    .cr-3d-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #b37400, 0 4px 6px rgba(0,0,0,0.4); }
+    .cr-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; backdrop-filter: blur(6px); overflow-y: auto; padding: 15px; box-sizing: border-box; }
+    .cr-modal-content { background: #181c24; border: 1px solid #2a313d; border-radius: 20px; max-width: 480px; margin: 20px auto; padding: 20px; color: #fff; font-family: sans-serif; }
+    .cr-modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a313d; padding-bottom: 10px; }
+    .cr-modal-header h2, .cr-modal-header h3 { margin: 0; color: #FFD700; font-size: 18px; }
+    .cr-close-btn { font-size: 28px; cursor: pointer; color: #888; line-height: 20px; }
+    .cr-close-btn:hover { color: #fff; }
+    .cr-stats-card { display: flex; gap: 10px; margin: 15px 0; }
+    .cr-stat-box { flex: 1; background: #212733; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid #2c3545; }
+    .cr-stat-box span { font-size: 11px; color: #aaa; }
+    .cr-stat-box h3 { margin: 4px 0 0; color: #00FF88; font-size: 16px; }
+    .cr-policy-box { background: rgba(255, 68, 68, 0.15); border: 1px solid #ff4444; color: #ff8888; padding: 10px; border-radius: 10px; font-size: 11px; line-height: 1.4; margin-bottom: 15px; }
+    .cr-section-title { font-size: 13px; font-weight: bold; color: #88a0c0; margin: 15px 0 10px; text-transform: uppercase; }
+    .cr-task-list { display: flex; flex-direction: column; gap: 10px; }
+    .cr-task-card { background: #212733; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #2c3545; }
+    .cr-platform-info { display: flex; align-items: center; gap: 10px; }
+    .cr-icon { width: 26px; height: 26px; flex-shrink: 0; }
+    .cr-platform-info h4 { margin: 0; font-size: 13px; color: #fff; }
+    .cr-platform-info p { margin: 2px 0 0; font-size: 11px; color: #aaa; }
+    .cr-reward-action { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .cr-badge { background: #00FF8822; color: #00FF88; padding: 2px 6px; border-radius: 6px; font-weight: bold; font-size: 11px; }
+    .cr-sub-btn { background: #0088cc; color: #fff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: bold; }
+    .cr-ranking-box { background: #212733; border-radius: 12px; padding: 10px; overflow-x: auto; }
+    .cr-ranking-box table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    .cr-ranking-box th, .cr-ranking-box td { padding: 8px 4px; border-bottom: 1px solid #2a313d; }
+    .cr-ranking-box th { color: #888; font-size: 11px; }
+    .cr-earn-text { color: #00FF88; font-weight: bold; }
+    .cr-form-group { margin-bottom: 12px; text-align: left; }
+    .cr-form-group label { display: block; font-size: 11px; color: #aaa; margin-bottom: 5px; }
+    .cr-form-group input { width: 100%; padding: 10px; background: #11141a; border: 1px solid #2c3545; border-radius: 8px; color: #fff; box-sizing: border-box; font-size: 13px; }
+    .cr-3d-submit-btn { width: 100%; background: linear-gradient(135deg, #00FF88 0%, #00B359 100%); border: none; padding: 12px; border-radius: 10px; color: #000; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #008040; font-size: 14px; }
+    .cr-3d-submit-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #008040; }
+
+    .energy-container {
+      margin-top: 15px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #f1c40f;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="custom-toast">Message here</div>
+
+  <div class="header-container">
+    <div class="wallet-container">
+        <div id="ton-connect"></div>
+        <button id="solana-connect-btn" class="solana-btn">Connect Solana</button>
+    </div>
+
+    <div class="top-stats">
+      <div class="stat-box">Earn per tap<br><span class="stat-val" id="earn-per-tap">+10</span></div>
+      <div class="stat-box">Coins to level up<br><span class="stat-val" id="coins-to-level" style="color:#3498db">768K</span></div>
+      <div class="stat-box">Profit per hour<br><span class="stat-val" id="profit-per-hour" style="color:#28a745">+2.4k</span></div>
+    </div>
+    <div class="est-banner" style="background: rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 6px; text-align: center; color: #f1c40f; font-size: 13px; font-weight: 600;">⚡ Dogepepe Tier | Season 1 Mining</div>
+        <!-- CREATOR REWARD 3D BUTTON -->
+    <div class="cr-header-container">
+      <button class="cr-3d-btn" onclick="crOpenModal()">
+        <span class="cr-btn-icon">🏆</span>
+        <span class="cr-btn-text">CREATOR REWARD</span>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- EXCHANGE TAB -->
+    <div id="exchange-tab" class="tab-content active">
+
+
+
+      <h1 id="balance" style="font-size: 40px; font-weight: bold; margin: 10px 0;">231,959</h1>
+      <div id="tap-btn-container" style="text-align: center; margin: 5px auto; display: flex; justify-content: center; align-items: center; width: 100%; position: relative;">
+        <img id="tap-btn" 
+          src="https://i.postimg.cc/dVgKyHV7/1784521286229-2.png" 
+          alt="Dogepepe Coin" 
+          style="width: 260px; height: 260px; object-fit: contain; border-radius: 50%; filter: drop-shadow(0px 0px 18px rgba(255, 215, 0, 0.6)); transition: transform 0.08s ease; cursor: pointer; user-select: none;">
+      </div>
+<!-- Energy Counter (Buttons ke upar) -->
+<div style="width: 100%; display: flex; justify-content: center; margin-bottom: 20px;">
+    <div style="background: rgba(255, 255, 255, 0.1); padding: 8px 24px; border-radius: 12px; font-size: 18px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">
+        <span id="energy">8658</span>/<span id="max-energy">1000</span>
+    </div>
+</div>
+
+<!-- 2x2 Grid Layout for Big Image Banner Cards -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 90%; max-width: 360px; margin: 0 auto;">
+
+    <!-- 1. Tap Boost (Doge) -->
+    <button onclick="upgradeTapBoost()" id="tap-boost-btn" style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+        <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="78799 (1).png" alt="Doge" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">Tap Boost</span>
+        <span id="boost-cost-text" style="background: rgba(0,0,0,0.35); padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">1000 🪙</span>
+    </button>
+
+    <!-- 2. Upgrade (Elon Musk) - Fixed face position -->
+    <button onclick="buyUpgrade()" id="upgrade-btn" style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+        <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="78824 (1).png" alt="Elon" style="width: 100%; height: 100%; object-fit: cover; object-position: top center;">
+        </div>
+        <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">Upgrade</span>
+        <span id="upgrade-cost-lbl" style="background: rgba(0,0,0,0.35); padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">5K 🪙</span>
+    </button>
+
+    <!-- 3. Tap Upgrade (Lamborghini) -->
+    <button onclick="buyTapUpgrade()" id="tap-upgrade-btn" style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+        <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="78797 (1).png" alt="Lambo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">Tap Upgrade</span>
+        <span id="tap-cost-lbl" style="background: rgba(0,0,0,0.35); padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">1K 🪙</span>
+    </button>
+
+    <!-- 4. Withdraw (Dogepepe) -->
+    <button onclick="openWalletModal()" style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+        <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="76410.png" alt="Dogepepe" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">Withdraw</span>
+        <span style="background: rgba(255,255,255,0.85); color: black; padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">Payout 💸</span>
+    </button>
+<!-- EARN TON Button -->
+<button class="earn-btn" onclick="openEarnPage('TON', 1.5, 'TON.png')"
+    style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+    <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <img src="TON.png" alt="EARN TON" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%;">
+    </div>
+    <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">EARN TON</span>
+    <span id="home-ton-timer" style="background: rgba(255,255,255,0.85); color: black; padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">Claim 1.5 TON 💰</span>
+</button>
+
+<!-- EARN BNB Button -->
+<button class="earn-btn" onclick="openEarnPage('BNB', 0.09, 'BNB .png')"
+    style="background: linear-gradient(145deg, #1f232a, #14161b); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; height: 180px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+    <div style="width: 100%; height: 85px; background: rgba(0,0,0,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <img src="BNB .png" alt="EARN BNB" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%;">
+    </div>
+    <span style="font-weight: bold; font-size: 13px; text-align: center; width: 100%;">EARN BNB</span>
+    <span id="home-bnb-timer" style="background: rgba(255,255,255,0.85); color: black; padding: 4px 0; border-radius: 8px; font-size: 11px; font-weight: bold; width: 100%; text-align: center;">Claim 0.09 BNB 💎</span>
+</button>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- FRIENDS TAB -->
+    <div id="friends-tab" class="tab-content">
+      <h2>Invite Friends</h2>
+      <p style="margin: 15px 0; color: #aaa; padding: 0 20px;">Share your link and earn coins for every user who joins!</p>
+      <button onclick="shareInviteLink()" style="padding: 14px 28px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">Invite a Friend 🚀</button>
+    </div>
+
+         <!-- AIRDROP TAB -->
+        <div id="airdrop-tab" class="tab-content" style="padding: 0 20px; overflow-y: auto;">
+            <h2>Airdrop Tasks</h2>
+            <p style="margin-top: 10px; color: #aaa; font-size: 14px;">Complete tasks to qualify for the airdrop.</p>
+            
+            <!-- Dynamic Tasks Container -->
+            <div id="taskList" style="margin-top: 15px;"></div>
+        </div>
+
+
+  <div class="nav-bar">
+    <div class="nav-item active" onclick="switchTab('exchange-tab', this)">💧<br>Exchange</div>
+    <div class="nav-item" onclick="switchTab('friends-tab', this)">👥<br>Friends</div>
+    <div class="nav-item" onclick="switchTab('airdrop-tab', this)">🏛️<br>Airdrop</div>
+        <div class="nav-item" onclick="switchTab('tasks-tab', this)">📋<br>Tasks</div>
+</div>
+<div id="tasks-tab" class="tab-content" style="display: none; padding: 15px; color: #fff; padding-bottom: 80px;">
+    <h2 style="font-size: 22px; margin-bottom: 5px; font-weight: bold;">Task Center</h2>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Complete tasks below to earn 50,000 Dogepepe coins each!</p>
+
+
+    <!-- Task 1: Binance News -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #f3ba2f22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #f3ba2f; font-weight: bold;">B</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Binance News</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.binance.com/en/square/news', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 2: OKX Exchange -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #262626; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; font-weight: bold;">O</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">OKX Official</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.okx.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 3: TON Ecosystem -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #0088cc22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #0088cc;">💎</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Explore TON Network</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://ton.org', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 4: CoinMarketCap -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #1652f022; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #1652f0;">📊</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">CoinMarketCap Tracking</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://coinmarketcap.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 5: CoinGecko -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #8dc63f22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #8dc63f;">🦎</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">CoinGecko Markets</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.coingecko.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 6: Telegram Official -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #229ed922; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #229ed9;">✈️</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Join Telegram Channel</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://telegram.org', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 7: Bybit Exchange -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #f7a60022; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #f7a600;">⚡</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Bybit Crypto Trading</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.bybit.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 8: Twitter / X Official -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #ffffff22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff;">🐦</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Follow on X (Twitter)</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://twitter.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 9: YouTube Community -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #ff000022; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #ff0000;">▶️</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Subscribe YouTube Channel</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://www.youtube.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+
+    <!-- Task 10: Solana Ecosystem -->
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #14f19522; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #14f195;">🟣</div>
+            <div>
+                <div style="color: #fff; font-weight: bold; font-size: 14px;">Solana Trending</div>
+                <div style="color: #f3ba2f; font-size: 12px; margin-top: 2px;">+50,000 Dogepepe</div>
+            </div>
+        </div>
+        <button onclick="window.open('https://solana.com', '_blank')" style="background: linear-gradient(135deg, #f3ba2f, #d49a00); color: #000; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px;">GO</button>
+    </div>
+</div>
+
+  </div>
+
+  <script>
+    function switchTab(tabId, element) {
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.style.display = 'none');
+    
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.style.display = 'block';
+    }
+    
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    }
+}
+
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) tg.expand();
+
+    let balance = parseFloat(localStorage.getItem('doge_balance')) || 231959;
+    window.earnPerTap = parseInt(localStorage.getItem('doge_tap')) || 10;
+    let profitPerHour = parseFloat(localStorage.getItem('doge_profit')) || 200000;
+
+localStorage.setItem('doge_profit', 200000);
+
+// Har second current state save karne ke liye
+setInterval(() => {
+    localStorage.setItem('doge_last_active', Date.now());
+    localStorage.setItem('doge_energy', energy);
+    localStorage.setItem('doge_max_energy', maxEnergy);
+}, 1000);
+// App close hone par data save rakhne ke liye
+window.addEventListener('beforeunload', () => {
+    localStorage.setItem('doge_last_active', Date.now());
+    localStorage.setItem('doge_energy', energy);
+    localStorage.setItem('doge_balance', balance);
+    localStorage.setItem('doge_max_energy', maxEnergy);
+
+});
+
+    let energy = parseInt(localStorage.getItem('doge_energy')) || 1000;
+
+let maxEnergy = parseInt(localStorage.getItem('doge_max_energy')) || 1000;
+let boostCost = parseInt(localStorage.getItem('doge_boost_cost')) || 1000;
+// Last active time load karein
+let lastActive = parseInt(localStorage.getItem('doge_last_active')) || Date.now();
+let currentTime = Date.now();
+
+// Seconds count karein kitni der app band rahi
+let elapsedSeconds = Math.floor((currentTime - lastActive) / 1000);
+
+// Energy recovery rate (jaise 1 energy per second ya jo aapka rate ho)
+let rechargeRate = 1; 
+let recoveredEnergy = elapsedSeconds * rechargeRate;
+
+// Total energy update karein (maxEnergy se zyada na ho)
+energy = Math.min(maxEnergy, energy + recoveredEnergy);
+
+
+function upgradeTapBoost() {
+    if (balance >= boostCost) {
+        balance -= boostCost;
+        maxEnergy += 1000;
+        energy = maxEnergy;
+        boostCost *= 2;
+
+        localStorage.setItem('doge_balance', balance);
+        localStorage.setItem('doge_max_energy', maxEnergy);
+        localStorage.setItem('doge_boost_cost', boostCost);
+        localStorage.setItem('doge_energy', energy);
+document.getElementById('max-energy').innerText = maxEnergy;
+
+        updateUI(); 
+    } else {
+        showToast("LOW BALANCE!");
+    }
+
+}
+
+    let upgradeLevel = parseInt(localStorage.getItem('doge_up_lvl')) || 0;
+    let tapUpgradeLevel = parseInt(localStorage.getItem('doge_tap_lvl')) || 0;
+
+    const balanceEl = document.getElementById('balance');
+    const tapBtn = document.getElementById('tap-btn');
+    const energyEl = document.getElementById('energy');
+
+    function showToast(message) {
+      const toast = document.getElementById('custom-toast');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function updateUI() {
+      if (balanceEl) balanceEl.innerText = Math.floor(balance).toLocaleString();
+      if (energyEl) energyEl.innerText = energy;
+      
+      const earnTapEl = document.getElementById('earn-per-tap');
+      if (earnTapEl) earnTapEl.innerText = "+" + window.earnPerTap;
+
+      const pphEl = document.getElementById('profit-per-hour');
+      if (pphEl) pphEl.innerText = "+" + (profitPerHour >= 1000 ? (profitPerHour / 1000).toFixed(1) + "k" : profitPerHour);
+
+      const currentUpgradeCost = 5000 * Math.pow(1.8, upgradeLevel);
+      const currentTapCost = 1000 * Math.pow(1.5, tapUpgradeLevel);
+      
+      document.getElementById('upgrade-cost-lbl').innerText = formatNumber(currentUpgradeCost) + " 🪙";
+      document.getElementById('tap-cost-lbl').innerText = formatNumber(currentTapCost) + " 🪙";
+
+      localStorage.setItem('doge_balance', balance);
+      localStorage.setItem('doge_tap', window.earnPerTap);
+      localStorage.setItem('doge_profit', profitPerHour);
+      localStorage.setItem('doge_energy', energy);
+    }
+
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+      if (num >= 1000) return Math.floor(num / 1000) + "K";
+      return Math.floor(num);
+    }
+
+    function handleTap(clientX, clientY) {
+      if (energy >= window.earnPerTap) {
+        balance += window.earnPerTap;
+        energy -= window.earnPerTap;
+        createTapEffect(clientX, clientY);
+        updateUI();
+      }
+    }
+
+    if (tapBtn) {
+      tapBtn.addEventListener('click', (e) => {
+        tapBtn.style.transform = 'scale(0.93)';
+        setTimeout(() => tapBtn.style.transform = 'scale(1)', 80);
+        handleTap(e.clientX, e.clientY);
+      });
+      tapBtn.addEventListener('touchstart', (e) => {
+        tapBtn.style.transform = 'scale(0.93)';
+        const touch = e.touches[0];
+        handleTap(touch.clientX, touch.clientY);
+      });
+      tapBtn.addEventListener('touchend', () => {
+        tapBtn.style.transform = 'scale(1)';
+      });
+    }
+
+    function createTapEffect(x, y) {
+      const text = document.createElement('div');
+      text.className = 'tap-animation';
+      text.innerText = '+' + window.earnPerTap;
+      text.style.left = `${x - 15}px`;
+      text.style.top = `${y - 30}px`;
+      document.body.appendChild(text);
+      setTimeout(() => text.remove(), 800);
+    }
+
+    function buyUpgrade() {
+      const cost = 500000 * Math.pow(1.8, upgradeLevel);
+      if (balance >= cost) {
+        balance -= cost;
+        upgradeLevel++;
+        profitPerHour += 5000;
+        updateUI();
+        showToast("Upgrade successful! 🚀");
+      } else {
+        showToast("Not enough coins!");
+      }
+    }
+
+    function buyTapUpgrade() {
+      const cost = 100000 * Math.pow(1.5, tapUpgradeLevel);
+      if (balance >= cost) {
+        balance -= cost;
+        tapUpgradeLevel++;
+        window.earnPerTap += 2;
+        updateUI();
+        showToast("Tap Boost activated! ⚡");
+      } else {
+        showToast("Not enough coins!");
+      }
+    }
+
+    setInterval(() => {
+      if (energy < maxEnergy) {
+        energy = Math.min(maxEnergy, energy + 3);
+        updateUI();
+      }
+    }, 1000);
+
+    setInterval(() => {
+      balance += (profitPerHour / 3600);
+      updateUI();
+    }, 1000);
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      el.classList.add('active');
+    }
+
+    function shareInviteLink() {
+      const botUsername = "Dogepepeofficialcoinbot"; 
+      const userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "7824642832";
+      const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=%F0%9F%90%B8%20Join%20Dogepepe%20Tap%20App%20and%20get%201,000,000%20Coins%20free!`;
+
+      if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(shareUrl);
+      } else {
+        window.open(shareUrl, '_blank');
+      }
+    }
+
+    function completeTask(taskId, url, reward) {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openLink(url);
+      } else {
+        window.open(url, '_blank');
+      }
+
+      setTimeout(() => {
+        balance += reward;
+        updateUI();
+        showToast(`Reward received: +${reward.toLocaleString()} coins! 🎉`);
+      }, 1000);
+    }
+
+    function claimDailyReward() {
+      balance += 100000;
+      updateUI();
+      showToast("Daily reward claimed successfully!");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        if (window.TON_CONNECT_UI) {
+          new window.TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/sohail8989/Dogepepeapp/main/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect'
+          });
+        }
+      } catch (e) {
+        console.log("TonConnect error:", e);
+      }
+
+      document.getElementById('solana-connect-btn')?.addEventListener('click', async () => {
+        const provider = window.phantom?.solana || window.solflare;
+        if (provider) {
+            try {
+                const resp = await provider.connect();
+                showToast("Solana Connected: " + resp.publicKey.toString().slice(0, 6) + "...");
+            } catch (err) {
+                console.error(err);
+                showToast("Connection failed or cancelled.");
+            }
+        } else {
+            showToast("Please install Phantom or Solflare wallet!");
+        }
+      });
+
+      updateUI();
+      // 1. Offline profit calculate karne ka function
+function applyOfflineEarnings() {
+    let lastTime = localStorage.getItem('dogepepe_last_time');
+    let currentTime = Math.floor(Date.now() / 1000);
+
+    // Agar pehli baar app khul rahi hai ya time saved hai
+    if (lastTime) {
+        let secondsPassed = currentTime - parseInt(lastTime);
+
+        // Agar 1 minute (60 seconds) se zyada app band rahi ho
+        if (secondsPassed > 60) {
+            let hoursPassed = secondsPassed / 3600;
+            
+            // Maximum 3 ghante tak ka offline profit limit
+            let maxHours = 3; 
+            let activeHours = Math.min(hoursPassed, maxHours);
+
+            // Aapke profit per hour ki value (jaise screenshot mein hai)
+            let profitPerHour = 2300000; 
+            let earnedCoins = Math.floor(activeHours * profitPerHour);
+
+            // Agar balance variable memory mein hai ya localStorage mein
+            if (typeof balance !== 'undefined') {
+                balance += earnedCoins; 
+            } else {
+                let savedBalance = parseInt(localStorage.getItem('dogepepe_balance')) || 204211;
+                savedBalance += earnedCoins;
+                localStorage.setItem('dogepepe_balance', savedBalance);
+            }
+        }
+    }
+    // Current time ko save karlo agle check ke liye
+    localStorage.setItem('dogepepe_last_time', currentTime);
+}
+
+// 2. App start hone par yahan run hoga
+applyOfflineEarnings();
+updateUI();
+
+    });
+let currentType = '';
+let currentRewardAmount = 0;
+
+function openEarnPage(type, amount, imgSrc) {
+    currentType = type;
+    currentRewardAmount = amount;
+    
+    document.getElementById('page-header-title').innerText = `Earn ${type}`;
+    document.getElementById('page-reward-title').innerText = `${amount} ${type} Daily Claim`;
+    document.getElementById('page-img').src = imgSrc;
+    
+    document.getElementById('earn-page').style.display = 'flex';
+    updatePageState();
+}
+
+function closeEarnPage() {
+    document.getElementById('earn-page').style.display = 'none';
+}
+
+function getStorageKey(type) {
+    return `dogepepe_last_claim_${type}`;
+}
+
+function updatePageState() {
+    const lastClaim = localStorage.getItem(getStorageKey(currentType));
+    const now = new Date().getTime();
+    const cooldown = 24 * 60 * 60 * 1000; // 24 Hours
+
+    const btn = document.getElementById('main-claim-btn');
+    const display = document.getElementById('countdown-display');
+
+    if (lastClaim) {
+        const elapsed = now - parseInt(lastClaim);
+        if (elapsed < cooldown) {
+            const timeLeft = cooldown - elapsed;
+            startActiveCountdown(timeLeft);
+            btn.innerText = "Claimed (24h Cooldown)";
+            btn.disabled = true;
+            btn.style.background = "#374151";
+            btn.style.color = "#9ca3af";
+            return;
+        }
+    }
+
+    btn.innerText = "Daily Collect 🚀";
+    btn.disabled = false;
+    btn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
+    btn.style.color = "white";
+    display.innerText = "Ready to Claim!";
+}
+
+function performClaim() {
+    const now = new Date().getTime();
+    localStorage.setItem(getStorageKey(currentType), now);
+    
+    alert(`Successfully collected ${currentRewardAmount} ${currentType}! 🎉 24-hour timer started.`);
+    updatePageState();
+    updateHomeTimers();
+}
+
+function startActiveCountdown(duration) {
+    let timeLeft = duration;
+    const display = document.getElementById('countdown-display');
+
+    const timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            updatePageState();
+            updateHomeTimers();
+            return;
+        }
+
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        display.innerText = `${hours}h ${minutes}m ${seconds}s remaining`;
+        timeLeft -= 1000;
+    }, 1000);
+}
+
+function updateHomeTimers() {
+    ['TON', 'BNB'].forEach(type => {
+        const lastClaim = localStorage.getItem(getStorageKey(type));
+        const homeTimerEl = document.getElementById(`home-${type.toLowerCase()}-timer`);
+        if (lastClaim) {
+            const elapsed = new Date().getTime() - parseInt(lastClaim);
+            const cooldown = 24 * 60 * 60 * 1000;
+            if (elapsed < cooldown) {
+                const timeLeft = cooldown - elapsed;
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                homeTimerEl.innerText = `${hours}h ${minutes}m left`;
+            } else {
+                homeTimerEl.innerText = `Claim ${type === 'TON' ? '1.5 TON' : '0.09 BNB'}`;
+            }
+        }
+    });
+}
+
+function openWithdrawModal() {
+    if (typeof openWalletModal === 'function') {
+        openWalletModal();
+    } else {
+        alert("Opening Professional Withdrawal Payout Window...");
+    }
+}
+
+// Ensure home timers update on load agar window.onload pehlay se hai toh yeh function usme call karlein
+if (typeof window.onload === 'function') {
+    let oldLoad = window.onload;
+    window.onload = function() {
+        oldLoad();
+        updateHomeTimers();
+    };
+} else {
+    window.onload = function() {
+        updateHomeTimers();
+    };
+}
+
+  </script>
+  <!-- Earn Detail View Page -->
+<div id="earn-page" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121418; z-index: 1000; flex-direction: column; padding: 20px; box-sizing: border-box; overflow-y: auto; color: white;">
+    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <button onclick="closeEarnPage()" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">← Back</button>
+        <div id="page-header-title" style="margin-left: 15px; font-size: 18px; font-weight: bold;">Earn Crypto</div>
+    </div>
+    
+    <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+        <img id="page-img" src="" alt="Crypto" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; object-position: center 20%; margin-bottom: 15px; border: 2px solid gold;">
+        <h2 id="page-reward-title" style="margin: 10px 0;">Claim Reward</h2>
+        <p style="color: #9ca3af; font-size: 14px;">Complete your daily claim and start the 24-hour countdown timer.</p>
+        <div id="countdown-display" style="font-size: 22px; font-weight: bold; color: gold; margin: 15px 0;">Ready to Claim!</div>
+        
+        <button id="main-claim-btn" onclick="performClaim()" style="width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; background: linear-gradient(135deg, #22c55e, #16a34a); color: white;">Daily Collect 🚀</button>
+    </div>
+
+    <!-- Professional Withdrawal Section with Policy -->
+    <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: left;">
+        <h3 style="margin-top: 0; font-size: 16px;">Professional Withdrawal</h3>
+        <p style="color: #9ca3af; font-size: 13px; line-height: 1.4;">Withdrawals are processed instantly according to platform policy. Ensure your wallet is connected before requesting payout.</p>
+<button onclick="showAirdropPopup()" style="width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;">
+    Payout 💵
+</button>
+
+    </div>
+</div>
+<!-- Custom Popup Box -->
+<div id="airdropModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+    <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 25px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="font-size: 40px; margin-bottom: 10px;">🚀</div>
+        <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px;">Notice</h3>
+        <p style="color: #9ca3af; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">Withdrawal is currently locked! Please wait for the official Airdrop distribution.</p>
+        <button onclick="closeAirdropPopup()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer;">OK</button>
+    </div>
+</div>
+
+<script>
+function showAirdropPopup() {
+    document.getElementById('airdropModal').style.display = 'flex';
+}
+
+function closeAirdropPopup() {
+    document.getElementById('airdropModal').style.display = 'none';
+}
+</script>
+
+</body>
+<!-- Wallet Selection Modal -->
+<div id="walletModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:flex-end;">
+    <div style="background:#1a1a1a; width:100%; max-width:500px; padding:20px; border-top-left-radius:20px; border-top-right-radius:20px; color:#fff;">
+        <span onclick="closeWalletModal()" style="float:right; font-size:24px; cursor:pointer; color:#aaa;">&times;</span>
+        <h3 style="margin-bottom: 15px;">Receiving wallet</h3>
+        
+        <label style="font-size: 13px; color: #888;">Receiving method</label>
+        <select id="walletMethod" style="width:100%; padding:12px; margin:8px 0 15px 0; background:#262626; border:1px solid #333; color:#fff; border-radius:8px;">
+            <option value="" disabled selected>Select a receiving method</option>
+            <option value="Bitget">Bitget</option>
+            <option value="Kraken">Kraken</option>
+            <option value="Bitcoin">Bitcoin</option>
+            <option value="USDT">USDT</option>
+            <option value="TON">TON</option>
+        </select>
+
+        <label style="font-size: 13px; color: #888;">Wallet Address</label>
+        <input type="text" id="walletAddressInput" placeholder="Enter your Receiving wallet account or address" style="width:100%; padding:12px; margin:8px 0 20px 0; background:#262626; border:1px solid #333; color:#fff; border-radius:8px; box-sizing: border-box;">
+        
+        <button onclick="saveWallet()" style="width:100%; padding:14px; background:linear-gradient(135deg, #f3ba2f, #d49a00); color:#000; font-weight:bold; border:none; border-radius:10px; cursor:pointer; font-size:16px;">Save</button>
+    </div>
+</div>
+
+<script>
+function openWalletModal() {
+    document.getElementById('walletModal').style.display = 'flex';
+}
+
+function closeWalletModal() {
+    document.getElementById('walletModal').style.display = 'none';
+}
+
+function saveWallet() {
+    const method = document.getElementById('walletMethod').value;
+    const address = document.getElementById('walletAddressInput').value.trim();
+
+    if (!method) {
+        alert("Please select a receiving method!");
+        return;
+    }
+    if (!address) {
+        alert("Please enter your wallet address!");
+        return;
+    }
+
+    alert("Wallet saved successfully for " + method + "!");
+    closeWalletModal();
+}
+function switchTab(tabId, element) {
+    // Sabhi tab contents ko hide karein
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.style.display = 'none';
+        tab.classList.remove('active');
+    });
+
+    // Jis tab par click hua hai usay show karein
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.style.display = 'block';
+        activeTab.classList.add('active');
+    }
+
+    // Nav bar items ki active class manage karein
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    }
+}
+    const tasks = [
+        {
+            id: 'daily_reward',
+            title: '📅 Daily Reward',
+            reward: 100000,
+            rewardText: '+100,000 Coins',
+            isDaily: true,
+            link: '#'
+        },
+        {
+            id: 'youtube_task',
+            title: '📺 Subscribe YouTube',
+            reward: 1000000,
+            rewardText: '+1,000,000 Coins',
+            link: 'https://www.youtube.com/@dogepepeofficial-l2p'
+        },
+        {
+            id: 'elon_task',
+            title: '🚀 Follow Elon Musk on X',
+            reward: 2500000,
+            rewardText: '+2,500,000 Coins',
+            link: 'https://x.com/elonmusk'
+        },
+        {
+            id: 'x_task',
+            title: '🐦 Follow X (Twitter)',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://x.com/dogepepe2026'
+        },
+        {
+            id: 'insta_task',
+            title: '📸 Follow Instagram',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://www.instagram.com/dogepepecoin?igsh=MWh0M3Jma2RtcmR2ag=='
+        },
+        {
+            id: 'fb_task',
+            title: '👥 Join Facebook Video',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://www.facebook.com/share/v/1HByc3WqBa/'
+        },
+        {
+            id: 'tiktok_task',
+            title: '🎵 Follow TikTok',
+            reward: 500000,
+            rewardText: '+500,000 Coins',
+            link: 'https://tiktok.com/@dogepepeofficialcoin'
+        }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('taskList');
+        if (!container) return;
+        container.innerHTML = '';
+
+        tasks.forEach(task => {
+            const card = document.createElement('div');
+            card.style.cssText = "background: rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;";
+
+            let btnText = task.isDaily ? 'Claim Reward' : 'Start';
+            let btnBg = '#28a745';
+            let isDisabled = false;
+            let clickAction = `handleTaskClick('${task.id}', '${task.link}', ${task.isDaily}, ${task.reward})`;
+
+            const status = localStorage.getItem(`task_${task.id}`);
+            const claimTime = localStorage.getItem(`time_${task.id}`);
+
+            if (task.isDaily && claimTime) {
+                const currentTime = new Date().getTime();
+                const timeDiff = currentTime - parseInt(claimTime);
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+
+                if (timeDiff < twentyFourHours) {
+                    isDisabled = true;
+                    btnBg = '#6c757d';
+                    const timeLeft = twentyFourHours - timeDiff;
+                    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                    const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                    btnText = `Claim in ${hours}h ${minutes}m`;
+                } else {
+                    localStorage.removeItem(`task_${task.id}`);
+                    localStorage.removeItem(`time_${task.id}`);
+                }
+            } else if (!task.isDaily && status === 'completed') {
+                isDisabled = true;
+                btnBg = '#6c757d';
+                btnText = 'Already Claimed';
+                clickAction = '';
+            }
+
+            card.innerHTML = `
+                <div>
+                    <strong style="font-size: 14px;">${task.title}</strong>
+                    <p style="margin: 3px 0 0 0; color: #4caf50; font-size: 12px;">${task.rewardText}</p>
+                </div>
+                <button style="background: ${btnBg}; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};" ${isDisabled ? 'disabled' : ''} onclick="${clickAction}">
+                    ${btnText}
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function handleTaskClick(id, link, isDaily, reward) {
+        if (link && link !== '#') {
+            window.open(link, '_blank');
+        }
+
+                if (isDaily) {
+            const currentTime = new Date().getTime();
+            localStorage.setItem(`time_${id}`, currentTime);
+          
+        } else {
+            localStorage.setItem(`task_${id}`, 'completed');
+          
+        }
+        
+        renderTasks();
+    }
+// Offline profit calculation on app load
+window.addEventListener('load', function() {
+    const currentTime = new Date().getTime();
+    const lastTime = localStorage.getItem('doge_last_time');
+    
+    if (lastTime) {
+        const elapsedSeconds = Math.floor((currentTime - parseInt(lastTime)) / 1000);
+        
+        if (elapsedSeconds > 10) {
+            // Yahan apne variable ka naam check kar lein jo Profit per hour ko store karta hai (misal ke tor par profitPerHour)
+            const earnedCoins = (profitPerHour / 3600) * elapsedSeconds;
+            
+            balance += earnedCoins;
+            localStorage.setItem('doge_balance', balance);
+        }
+    }
+    localStorage.setItem('doge_last_time', currentTime);
+});
+
+// Har waqt time update karne ke liye
+setInterval(function() {
+    localStorage.setItem('doge_last_time', new Date().getTime());
+}, 10000);
+
+    window.addEventListener('load', renderTasks);
+    setInterval(renderTasks, 60000);
+
+</script>
+  <!-- ========================================== -->
+  <!-- CREATOR REWARD MODALS (POPUPS)             -->
+  <!-- ========================================== -->
+  <div id="crRewardModal" class="cr-modal-overlay">
+    <div class="cr-modal-content">
+      <div class="cr-modal-header">
+        <h2>🏆 Creator Reward Hub</h2>
+        <span class="cr-close-btn" onclick="crCloseModal()">&times;</span>
+      </div>
+
+      <!-- User Stats -->
+      <div class="cr-stats-card">
+        <div class="cr-stat-box">
+          <span>Your Earnings</span>
+          <h3 id="crUserEarnings">0.00 USDT</h3>
+        </div>
+        <div class="cr-stat-box">
+          <span>Your Rank</span>
+          <h3 id="crUserRank"># Unranked</h3>
+        </div>
+      </div>
+
+      <!-- Policy Warning -->
+      <div class="cr-policy-box">
+        ⚠️ <strong>STRICT POLICY:</strong> Views must be 100% organic & real. Fake/Bot views will result in permanent ban and zero payout verification!
+      </div>
+
+      <!-- Platform Tasks -->
+      <div class="cr-section-title">📱 Select Platform & Submit</div>
+      <div class="cr-task-list">
+        
+        <!-- YouTube -->
+        <div class="cr-task-card">
+          <div class="cr-platform-info">
+            <svg class="cr-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <div>
+              <h4>YouTube Reward</h4>
+              <p>Requirement: 1 Million Views</p>
+            </div>
+          </div>
+          <div class="cr-reward-action">
+            <span class="cr-badge">2,500 USDT</span>
+            <button class="cr-sub-btn" onclick="crOpenSubmit('YouTube', '1M Views')">Submit Link</button>
+          </div>
+        </div>
+
+        <!-- X (Twitter) -->
+        <div class="cr-task-card">
+          <div class="cr-platform-info">
+            <svg class="cr-icon" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <div>
+              <h4>X (Twitter) Reward</h4>
+              <p>1M Views + 500k Likes</p>
+            </div>
+          </div>
+          <div class="cr-reward-action">
+            <span class="cr-badge">3,000 USDT</span>
+            <button class="cr-sub-btn" onclick="crOpenSubmit('X / Twitter', '1M Views & 500K Likes')">Submit Link</button>
+          </div>
+        </div>
+
+        <!-- TikTok -->
+        <div class="cr-task-card">
+          <div class="cr-platform-info">
+            <svg class="cr-icon" viewBox="0 0 24 24" fill="#00F2FE"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68 6.34 6.34 0 0 0 9.33 22a6.33 6.33 0 0 0 6.33-6.33V9.05a8.16 8.16 0 0 0 4.67 1.48V7.07a4.85 4.85 0 0 1-.74-.38z"/></svg>
+            <div>
+              <h4>TikTok Reward</h4>
+              <p>Requirement: 5 Million Views</p>
+            </div>
+          </div>
+          <div class="cr-reward-action">
+            <span class="cr-badge">1,750 USDT</span>
+            <button class="cr-sub-btn" onclick="crOpenSubmit('TikTok', '5M Views')">Submit Link</button>
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="cr-task-card">
+          <div class="cr-platform-info">
+            <svg class="cr-icon" viewBox="0 0 24 24" fill="#E1306C"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <div>
+              <h4>Instagram Reward</h4>
+              <p>Requirement: 1 Million Views</p>
+            </div>
+          </div>
+          <div class="cr-reward-action">
+            <span class="cr-badge">2,270 USDT</span>
+            <button class="cr-sub-btn" onclick="crOpenSubmit('Instagram', '1M Views')">Submit Link</button>
+          </div>
+        </div>
+
+        <!-- Facebook -->
+        <div class="cr-task-card">
+          <div class="cr-platform-info">
+            <svg class="cr-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <div>
+              <h4>Facebook Reward</h4>
+              <p>Requirement: 10 Million Views</p>
+            </div>
+          </div>
+          <div class="cr-reward-action">
+            <span class="cr-badge">2,300 USDT</span>
+            <button class="cr-sub-btn" onclick="crOpenSubmit('Facebook', '10M Views')">Submit Link</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Ranking Table -->
+      <div class="cr-section-title">🔥 Live Top Creators Ranking</div>
+      <div class="cr-ranking-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Creator</th>
+              <th>Platform</th>
+              <th>Earned</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🥇 #1</td>
+              <td>@CryptoKing_99</td>
+              <td>YouTube</td>
+              <td class="cr-earn-text">+2,500 USDT</td>
+            </tr>
+            <tr>
+              <td>🥈 #2</td>
+              <td>@Alex_Vlogs</td>
+              <td>TikTok</td>
+              <td class="cr-earn-text">+1,750 USDT</td>
+            </tr>
+            <tr>
+              <td>🥉 #3</td>
+              <td>@TraderX_Official</td>
+              <td>X (Twitter)</td>
+              <td class="cr-earn-text">+3,000 USDT</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUBMIT LINK FORM MODAL -->
+  <div id="crSubmitModal" class="cr-modal-overlay">
+    <div class="cr-modal-content">
+      <div class="cr-modal-header">
+        <h3 id="crSubmitTitle">Submit Video Link</h3>
+        <span class="cr-close-btn" onclick="crCloseSubmit()">&times;</span>
+      </div>
+      
+      <form id="crSubmitForm" onsubmit="crHandleFormSubmit(event)">
+        <input type="hidden" id="crSelectedPlatform" name="platform" value="">
+        
+        <div class="cr-form-group">
+          <label>Telegram Username or ID</label>
+          <input type="text" id="crUserContact" placeholder="@username or ID" required>
+        </div>
+
+        <div class="cr-form-group">
+          <label>Video URL (Minimum Views Required)</label>
+          <input type="url" id="crVideoLink" placeholder="https://..." required>
+        </div>
+
+        <div class="cr-form-group">
+          <label>BEP20 / TRC20 USDT Wallet Address</label>
+          <input type="text" id="crWalletAddress" placeholder="0x... or T..." required>
+        </div>
+
+        <button type="submit" class="cr-3d-submit-btn" id="crSubmitBtn">
+          🚀 Submit for Verification
+        </button>
+      </form>
+    </div>
+  </div>
+<!-- ========================================== -->
+<!-- CREATOR REWARD HUB (STYLING & JAVASCRIPT)  -->
+<!-- ========================================== -->
+<style>
+  /* Modals Popup Overlay */
+  .cr-modal-overlay {
+    display: none; /* Soft hide by default */
+    position: fixed !important;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 999999 !important;
+    overflow-y: auto;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    font-family: sans-serif;
+  }
+
+  /* Modal Content Box */
+  .cr-modal-content {
+    background: #181920;
+    color: #ffffff;
+    max-width: 480px;
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 16px;
+    position: relative;
+    border: 1px solid #2e303d;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  }
+
+  .cr-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2e303d;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  .cr-close-btn {
+    font-size: 28px;
+    cursor: pointer;
+    color: #888;
+  }
+  .cr-close-btn:hover { color: #fff; }
+
+  /* Stats Card */
+  .cr-stats-card {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  .cr-stat-box {
+    flex: 1;
+    background: #222431;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  .cr-stat-box span { font-size: 12px; color: #aaa; }
+  .cr-stat-box h3 { margin: 5px 0 0 0; font-size: 16px; color: #00f2fe; }
+
+  /* Policy Box */
+  .cr-policy-box {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    color: #ffc107;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 15px;
+  }
+
+  .cr-section-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 15px 0 10px 0;
+    color: #ddd;
+  }
+
+  /* Task Card */
+  .cr-task-card {
+    background: #222431;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .cr-platform-info { display: flex; align-items: center; gap: 10px; }
+  .cr-icon { width: 28px; height: 28px; flex-shrink: 0; }
+  .cr-platform-info h4 { margin: 0; font-size: 14px; }
+  .cr-platform-info p { margin: 2px 0 0 0; font-size: 11px; color: #aaa; }
+
+  .cr-reward-action { text-align: right; }
+  .cr-badge {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #2ed573;
+    margin-bottom: 4px;
+  }
+  .cr-sub-btn {
+    background: #38ef7d;
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  /* Form Inputs */
+  .cr-form-group { margin-bottom: 12px; text-align: left; }
+  .cr-form-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
+  .cr-form-group input {
+    width: 100%;
+    padding: 10px;
+    background: #111217;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+  .cr-3d-submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  /* Table */
+  .cr-ranking-box table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .cr-ranking-box th, .cr-ranking-box td { padding: 8px; text-align: left; }
+  .cr-earn-text { color: #38ef7d; font-weight: bold; }
+</style>
+
+<script>
+  // Creator Hub Open Function
+  function openCreatorHub() {
+    var modal = document.getElementById('crRewardModal');
+    if (modal) {
+      modal.style.display = 'block';
+    } else {
+      alert('Error: crRewardModal HTML nahi mila!');
+    }
+  }
+
+  // Creator Hub Close Function
+  function crCloseModal() {
+    var modal = document.getElementById('crRewardModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // Submit Task Form Open Function
+  function crOpenSubmit(platformName, requirementText) {
+    crCloseModal(); // Pehle main hub band karo
+    var submitModal = document.getElementById('crSubmitModal');
+    if (submitModal) {
+      submitModal.style.display = 'block';
+      
+      var title = document.getElementById('crSubmitTitle');
+      if (title) title.innerText = 'Submit ' + platformName + ' Link (' + requirementText + ')';
+      
+      var input = document.getElementById('crSelectedPlatform');
+      if (input) input.value = platformName;
+    }
+  }
+// Automatic Trigger for Creator Buttons
+document.addEventListener("DOMContentLoaded", function() {
+    var allButtons = document.querySelectorAll("a, button, div, span");
+    allButtons.forEach(function(btn) {
+        // Sirf asli buttons/links ya chote elements ko target karein, baray containers ko nahi
+        if ((btn.tagName === 'A' || btn.tagName === 'BUTTON' || btn.children.length === 0) && 
+            btn.innerText && btn.innerText.toLowerCase().includes("creator")) {
+            btn.style.cursor = "pointer";
+            btn.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openCreatorHub();
+            });
+        }
+    });
+});
+
+</script>
+</html>
