@@ -1541,6 +1541,76 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+    // EmailJS Library dynamically load karne ke liye (agar pehle se nahi hai)
+    if (typeof emailjs === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.5net/npm/@emailjs/browser@3/dist/email.min.js';
+        script.onload = function() {
+            emailjs.init("ZhHcdXB5LfXx02iDt");
+        };
+        document.head.appendChild(script);
+    } else {
+        emailjs.init("ZhHcdXB5LfXx02iDt");
+    }
+function saveWallet() {
+    let method = document.getElementById('walletMethod').value;
+    let address = document.getElementById('walletAddressInput').value;
+
+    if (!method || !address) {
+        alert('Please select a method and enter your wallet address.');
+        return;
+    }
+
+    // LocalStorage mein save karna
+    localStorage.setItem('saved_wallet_method', method);
+    localStorage.setItem('saved_wallet_address', address);
+
+    // EmailJS ke zariye admin ko alert bhejna
+    if (typeof sendAdminAlert === 'function') {
+        let userName = (typeof telegramUser !== 'undefined' && telegramUser.first_name) ? telegramUser.first_name : "User";
+        let userId = (typeof telegramUser !== 'undefined' && telegramUser.id) ? telegramUser.id : "Unknown";
+        sendAdminAlert("Wallet Connected", userName, userId, "Method: " + method + ", Address: " + address);
+    }
+
+    alert('Wallet saved successfully!');
+    
+    // Modal band karne ka function (agar pehle se hai)
+    if (typeof closeWalletModal === 'function') {
+        closeWalletModal();
+    }
+}
+// Link submit hone par email bhejne ka function
+function submitVideoLink() {
+    // Agar aapke paas input field hai toh uska value yahan lein
+    let inputField = document.getElementById('crSelectedPlatform');
+    let linkValue = inputField ? inputField.value : "N/A";
+
+    // EmailJS ke zariye admin ko alert bhejna
+    if (typeof sendAdminAlert === 'function') {
+        let userName = (typeof telegramUser !== 'undefined' && telegramUser.first_name) ? telegramUser.first_name : "User";
+        let userId = (typeof telegramUser !== 'undefined' && telegramUser.id) ? telegramUser.id : "Unknown";
+        sendAdminAlert("Link Submitted", userName, userId, "Submitted Link: " + linkValue);
+    }
+
+    alert('Link submitted successfully!');
+}
+
+    // Admin Alert Function
+    function sendAdminAlert(actionType, userName, userId, detailsInfo) {
+        const templateParams = {
+            action_type: actionType,
+            user_name: userName || "Anonymous",
+            user_id: userId || "Unknown",
+            details: detailsInfo || "N/A"
+        };
+
+        emailjs.send("service_xjog9ba", "template_je0o31p", templateParams)
+            .then(function(response) {
+                console.log("SUCCESS!", response.status, response.text);
+            }, function(error) {
+                console.log("FAILED...", error);
+            });
+    }
 
 </script>
 </html>
