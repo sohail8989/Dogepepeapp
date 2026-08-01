@@ -479,6 +479,13 @@ button, .claim-btn, .solana-btn, .daily-container {
 </div>
 
   </div>
+<div id="custom-alert" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#1a1e26; padding:20px; border-radius:16px; width:80%; max-width:300px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:white;">
+    <h3 style="margin:0 0 10px 0; font-size:18px; color:#4caf50;">Success!</h3>
+    <p id="custom-alert-msg" style="font-size:14px; color:#aaa; margin-bottom:20px;"></p>
+    <button onclick="document.getElementById('custom-alert').style.display='none'" style="background:linear-gradient(135deg, #22c55e, #16a34a); border:none; color:white; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">OK</button>
+  </div>
+</div>
 
   <script>
     function switchTab(tabId, element) {
@@ -792,7 +799,11 @@ function openEarnPage(type, amount, imgSrc) {
     document.getElementById('page-header-title').innerText = `Earn ${type}`;
     document.getElementById('page-reward-title').innerText = `${amount} ${type} Daily Claim`;
     document.getElementById('page-img').src = imgSrc;
-    
+    let balanceKey = `dogepepe_${type.toLowerCase()}_balance`;
+let currentBal = parseFloat(localStorage.getItem(balanceKey)) || 0;
+document.getElementById('earn-page-balance').innerText = currentBal.toFixed(type === 'TON' ? 2 : 4);
+document.getElementById('earn-page-symbol').innerText = type;
+
     document.getElementById('earn-page').style.display = 'flex';
     updatePageState();
 }
@@ -835,12 +846,40 @@ function updatePageState() {
 
 function performClaim() {
     const now = new Date().getTime();
-    localStorage.setItem(getStorageKey(currentType), now);
     
-    alert(`Successfully collected ${currentRewardAmount} ${currentType}! 🎉 24-hour timer started.`);
+    // 1. Last claim time save karein (timer ke liye)
+    localStorage.setItem(getStorageKey(currentType), now);
+
+    // 2. Balance ko fetch karein aur naya reward add karke save karein
+    let balanceKey = `dogepepe_${currentType.toLowerCase()}_balance`;
+    let currentBalance = parseFloat(localStorage.getItem(balanceKey)) || 0;
+    
+    currentBalance += currentRewardAmount;
+    localStorage.setItem(balanceKey, currentBalance);
+
+document.getElementById('custom-alert-msg').innerText = `Successfully collected ${currentRewardAmount} ${currentType}! 🎉 24-hour timer started.`;
+document.getElementById('custom-alert').style.display = 'flex';
+
     updatePageState();
     updateHomeTimers();
+    
+    // Agar aapke paas balance display update karne ka koi function hai toh yahan call kardein
+    // updateBalanceUI(); 
 }
+function updateBalanceDisplay() {
+    let tonBal = parseFloat(localStorage.getItem('dogepepe_ton_balance')) || 0;
+    let bnbBal = parseFloat(localStorage.getItem('dogepepe_bnb_balance')) || 0;
+
+    let tonEl = document.getElementById('ton-balance-val');
+    let bnbEl = document.getElementById('bnb-balance-val');
+
+    if (tonEl) tonEl.innerText = tonBal.toFixed(2);
+    if (bnbEl) bnbEl.innerText = bnbBal.toFixed(4);
+}
+
+window.addEventListener('load', () => {
+    updateBalanceDisplay();
+});
 
 function startActiveCountdown(duration) {
     let timeLeft = duration;
@@ -910,7 +949,13 @@ if (typeof window.onload === 'function') {
         <button onclick="closeEarnPage()" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">← Back</button>
         <div id="page-header-title" style="margin-left: 15px; font-size: 18px; font-weight: bold;">Earn Crypto</div>
     </div>
-    
+    <!-- Balance Display Box -->
+<div style="background: rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 12px; margin: 15px 0; text-align: center;">
+  <span style="font-size: 13px; color: #aaa; display: block;">Your Total Balance:</span>
+  <span id="earn-page-balance" style="font-size: 22px; font-weight: bold; color: #4caf50;">0.00</span>
+  <span id="earn-page-symbol" style="font-size: 16px; font-weight: bold; color: #fff;">TON</span>
+</div>
+
     <div style="background: #1a1e26; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
         <img id="page-img" src="" alt="Crypto" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; object-position: center 20%; margin-bottom: 15px; border: 2px solid gold;">
         <h2 id="page-reward-title" style="margin: 10px 0;">Claim Reward</h2>
