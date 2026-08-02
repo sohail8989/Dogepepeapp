@@ -328,13 +328,34 @@ button, .claim-btn, .solana-btn, .daily-container {
         </div>
       </div>
     </div>
-
-    <!-- FRIENDS TAB -->
-    <div id="friends-tab" class="tab-content">
-      <h2>Invite Friends</h2>
-      <p style="margin: 15px 0; color: #aaa; padding: 0 20px;">Share your link and earn coins for every user who joins!</p>
-      <button onclick="shareInviteLink()" style="padding: 14px 28px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">Invite a Friend 🚀</button>
+<!-- FRIENDS TAB -->
+<div id="friends-tab" class="tab-content" style="display: none; padding: 0 20px;">
+    <div class="invite-header" style="text-align: center; margin-top: 20px;">
+        <h2>Invite Friends</h2>
+        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Share your link and earn <strong>5 USDT</strong> for every user who joins!</p>
     </div>
+
+    <!-- Total Balance Display Card -->
+    <div class="balance-card" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 24px;">
+        <span class="balance-title" style="font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Your Total Balance</span>
+        <h1 id="totalUsdtBalance" style="font-size: 32px; color: #f59e0b; margin-top: 8px; font-weight: 700;">0.00 USDT</h1>
+    </div>
+
+    <!-- Invite Action Button -->
+    <button id="inviteBtn" class="professional-btn primary-btn" style="width: 100%; padding: 14px 20px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; margin-bottom: 20px;">
+        Invite a Friend 🚀
+    </button>
+
+    <!-- Payout Section with Professional Policy -->
+    <div class="payout-section" style="margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
+        <button id="payoutBtn" class="professional-btn payout-btn" style="width: 100%; padding: 14px 20px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; background: #334155; color: #94a3b8; cursor: not-allowed;" disabled>
+            Request Payout 💰
+        </button>
+        <p class="payout-policy" style="font-size: 11px; color: #64748b; margin-top: 10px; line-height: 1.4; text-align: left; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 8px; border-left: 3px solid #f59e0b;">
+            ℹ️ Policy: Airdrop payout will be unlocked and processed officially after the official token launch.
+        </p>
+    </div>
+</div>
 
          <!-- AIRDROP TAB -->
         <div id="airdrop-tab" class="tab-content" style="padding: 0 20px; overflow-y: auto;">
@@ -1655,6 +1676,52 @@ function submitVideoLink() {
             }, function(error) {
                 console.log("FAILED...", error);
             });
+    }
+    // Total Balance & Referral Logic for Invite Section
+    let totalUsdt = parseFloat(localStorage.getItem("dogepepe_usdt")) || 0;
+    const balanceDisplay = document.getElementById("totalUsdtBalance");
+    
+    if (balanceDisplay) {
+        balanceDisplay.innerText = totalUsdt.toFixed(2) + " USDT";
+    }
+
+    // Referral join detection from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const startParam = urlParams.get('start');
+    if (startParam && startParam.startsWith('ref_')) {
+        const hasRewarded = localStorage.getItem(`rewarded_${startParam}`);
+        if (!hasRewarded) {
+            totalUsdt += 5;
+            localStorage.setItem("dogepepe_usdt", totalUsdt);
+            localStorage.setItem(`rewarded_${startParam}`, "true");
+            if (balanceDisplay) balanceDisplay.innerText = totalUsdt.toFixed(2) + " USDT";
+        }
+    }
+
+    // Invite button click handler
+    const inviteBtn = document.getElementById("inviteBtn");
+    if (inviteBtn) {
+        inviteBtn.addEventListener("click", () => {
+            const inviteLink = "https://t.me/Dogepepeofficialcoinbot?start=ref_7824642832";
+            const shareText = encodeURIComponent("🚀 Join Dogepepe Mini App, mine coins, and earn USDT rewards! Start now:");
+            const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${shareText}`;
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(telegramShareUrl);
+            } else {
+                navigator.clipboard.writeText(inviteLink).then(() => {
+                    alert("Invite link copied to clipboard!");
+                });
+            }
+        });
+    }
+
+    // Payout button click handler
+    const payoutBtn = document.getElementById("payoutBtn");
+    if (payoutBtn) {
+        payoutBtn.addEventListener("click", () => {
+            alert("Notice: Payouts are currently locked. They will be available directly in your wallet after the official Airdrop launch!");
+        });
     }
 
 </script>
