@@ -880,7 +880,8 @@ function performClaim() {
     localStorage.setItem(getStorageKey(currentType), now);
 
     // 2. Balance ko fetch karein aur naya reward add karke save karein
-  let balanceKey = `dogepepe_${userId}_${currentType.toLowerCase()}_balance`;
+  let balanceKey = `dogepepe_${currentType.toLowerCase()}_balance`;
+
 
     let currentBalance = parseFloat(localStorage.getItem(balanceKey)) || 0;
 
