@@ -867,26 +867,44 @@ function updatePageState() {
 
 function performClaim() {
     const now = new Date().getTime();
-    
+
     // 1. Last claim time save karein (timer ke liye)
     localStorage.setItem(getStorageKey(currentType), now);
 
     // 2. Balance ko fetch karein aur naya reward add karke save karein
     let balanceKey = `dogepepe_${currentType.toLowerCase()}_balance`;
     let currentBalance = parseFloat(localStorage.getItem(balanceKey)) || 0;
-    
-    currentBalance += currentRewardAmount;
+
+    // Amount ensure karein ke valid number ho
+    let addAmount = parseFloat(currentRewardAmount) || 0;
+    currentBalance += addAmount;
+
     localStorage.setItem(balanceKey, currentBalance);
 
-document.getElementById('custom-alert-msg').innerText = `Successfully collected ${currentRewardAmount} ${currentType}! 🎉 24-hour timer started.`;
-document.getElementById('custom-alert').style.display = 'flex';
+    // 3. Screen par balance real-time update karein
+    const decimals = (currentType === 'TON') ? 2 : 4;
+    const balanceElem = document.getElementById('earn-page-balance');
+    if (balanceElem) {
+        balanceElem.innerText = currentBalance.toFixed(decimals);
+    }
+
+    // Custom Alert Message
+    const alertMsg = document.getElementById('custom-alert-msg');
+    if (alertMsg) {
+        alertMsg.innerText = `Successfully collected ${addAmount} ${currentType}! 24-hour timer started.`;
+    }
+    
+    const alertBox = document.getElementById('custom-alert');
+    if (alertBox) {
+        alertBox.style.display = 'flex';
+    }
 
     updatePageState();
-    updateHomeTimers();
-    
-    // Agar aapke paas balance display update karne ka koi function hai toh yahan call kardein
-    // updateBalanceUI(); 
+    if (typeof updateHomeTimers === 'function') {
+        updateHomeTimers();
+    }
 }
+
 function updateBalanceDisplay() {
     let tonBal = parseFloat(localStorage.getItem('dogepepe_ton_balance')) || 0;
     let bnbBal = parseFloat(localStorage.getItem('dogepepe_bnb_balance')) || 0;
@@ -894,10 +912,12 @@ function updateBalanceDisplay() {
     let tonEl = document.getElementById('ton-balance-val');
     let bnbEl = document.getElementById('bnb-balance-val');
 
+    // Values ko screen par push karne ki lines (Important Fix)
     if (tonEl) tonEl.innerText = tonBal.toFixed(2);
     if (bnbEl) bnbEl.innerText = bnbBal.toFixed(4);
 }
 
+// Window load hone par balances load karein
 window.addEventListener('load', () => {
     updateBalanceDisplay();
 });
