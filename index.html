@@ -808,6 +808,14 @@ function applyOfflineEarnings() {
 // 2. App start hone par yahan run hoga
 applyOfflineEarnings();
 updateUI();
+// Telegram Init & User Identification
+if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+}
+
+const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+const userId = tgUser ? tgUser.id : 'default';
 
     });
 let currentType = '';
@@ -872,7 +880,8 @@ function performClaim() {
     localStorage.setItem(getStorageKey(currentType), now);
 
     // 2. Balance ko fetch karein aur naya reward add karke save karein
-    let balanceKey = `dogepepe_${currentType.toLowerCase()}_balance`;
+  let balanceKey = `dogepepe_${userId}_${currentType.toLowerCase()}_balance`;
+
     let currentBalance = parseFloat(localStorage.getItem(balanceKey)) || 0;
 
     // Amount ensure karein ke valid number ho
